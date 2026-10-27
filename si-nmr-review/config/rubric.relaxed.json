@@ -1,0 +1,2033 @@
+{
+ "purity_basis": "high",
+ "base_grade_table": [
+  {
+   "min_purity_mol_pct": 99,
+   "grade": "E"
+  },
+  {
+   "min_purity_mol_pct": 98,
+   "grade": "E-"
+  },
+  {
+   "min_purity_mol_pct": 97,
+   "grade": "V+"
+  },
+  {
+   "min_purity_mol_pct": 96,
+   "grade": "V"
+  },
+  {
+   "min_purity_mol_pct": 95,
+   "grade": "V-"
+  },
+  {
+   "min_purity_mol_pct": 92.5,
+   "grade": "S+"
+  },
+  {
+   "min_purity_mol_pct": 90,
+   "grade": "S"
+  },
+  {
+   "min_purity_mol_pct": 85,
+   "grade": "S-"
+  },
+  {
+   "min_purity_mol_pct": 0,
+   "grade": "N"
+  }
+ ],
+ "default_base_grade_if_purity_unknown": "E",
+ "rules": [
+  {
+   "id": "PUR-NOT-ESTIMABLE",
+   "title": "1H purity cannot be estimated from the page",
+   "standard_quote": "The spectra you present in your Supporting Information file should provide evidence for identity and purity of the compounds you claim in your manuscript.",
+   "nucleus": "1H",
+   "condition": {
+    "not": {
+     "feature": "purity_estimable",
+     "op": "is_true"
+    }
+   },
+   "effect": "cap",
+   "notches": 0,
+   "cap_grade": "S",
+   "group": "purity",
+   "severity": "blocker",
+   "human_review": true,
+   "reason_template": "Purity could not be estimated from this 1H page (purity_estimable {purity_estimable}; legibility {legibility}), so the page does not show the 95% purity aim. Grade capped at S until a reviewer integrates the spectrum or obtains the raw data."
+  },
+  {
+   "id": "PUR-STRADDLE-95",
+   "title": "Purity range straddles the 95% aim",
+   "standard_quote": "the aim for all spectra published by the group is 95% or better purity of your claimed compound, by 1H NMR.",
+   "nucleus": "1H",
+   "condition": {
+    "all": [
+     {
+      "feature": "purity_mol_pct_low",
+      "op": "<",
+      "value": 95
+     },
+     {
+      "feature": "purity_mol_pct_high",
+      "op": ">=",
+      "value": 95
+     }
+    ]
+   },
+   "effect": "flag",
+   "notches": 0,
+   "cap_grade": "",
+   "group": "purity",
+   "severity": "major",
+   "human_review": true,
+   "reason_template": "Purity range {purity_mol_pct_low}-{purity_mol_pct_high} mol% straddles the 95% aim because the proton counts of the unidentified signals ({unknown_h_equiv} H-equiv) are unknown. The base grade uses the midpoint. Reviewer: assign the unknown signals and re-grade if the compound is clearly on one side of 95%."
+  },
+  {
+   "id": "PUR-STRADDLE-90",
+   "title": "Purity range straddles the 90% floor",
+   "standard_quote": "If there is a compound that is important for a project but cannot be purified to 90% purity (due to instability, volatility, acid-sensitivity, etc.), we should discuss whether to report it.",
+   "nucleus": "1H",
+   "condition": {
+    "all": [
+     {
+      "feature": "purity_mol_pct_low",
+      "op": "<",
+      "value": 90
+     },
+     {
+      "feature": "purity_mol_pct_high",
+      "op": ">=",
+      "value": 90
+     }
+    ]
+   },
+   "effect": "flag",
+   "notches": 0,
+   "cap_grade": "",
+   "group": "purity",
+   "severity": "major",
+   "human_review": true,
+   "reason_template": "Purity range {purity_mol_pct_low}-{purity_mol_pct_high} mol% straddles 90%, the line below which the compound needs a PI decision and a stated reason. The base grade uses the midpoint; a reviewer must decide which side applies."
+  },
+  {
+   "id": "PUR-TOLERABLE-BAND",
+   "title": "Purity certainly in the 90-95% tolerable band",
+   "standard_quote": "If, after at least two additional attempts to repurify a sample, the purity is only between 90% and 95%, such spectra are tolerable.",
+   "nucleus": "1H",
+   "condition": {
+    "all": [
+     {
+      "feature": "purity_mol_pct_low",
+      "op": ">=",
+      "value": 90
+     },
+     {
+      "feature": "purity_mol_pct_high",
+      "op": "<",
+      "value": 95
+     }
+    ]
+   },
+   "effect": "flag",
+   "notches": 0,
+   "cap_grade": "",
+   "group": "purity",
+   "severity": "major",
+   "human_review": true,
+   "reason_template": "Purity {purity_mol_pct_low}-{purity_mol_pct_high} mol% is in the 90-95% band. That is tolerable only after at least two additional repurification attempts, and it counts toward the SI limit of 2-3 such spectra per 40. Reviewer: confirm the repurification attempts."
+  },
+  {
+   "id": "PUR-BELOW-90",
+   "title": "Purity certainly below 90%",
+   "standard_quote": "If there is a compound that is important for a project but cannot be purified to 90% purity (due to instability, volatility, acid-sensitivity, etc.), we should discuss whether to report it.",
+   "nucleus": "1H",
+   "condition": {
+    "feature": "purity_mol_pct_high",
+    "op": "<",
+    "value": 90
+   },
+   "effect": "cap",
+   "notches": 0,
+   "cap_grade": "S-",
+   "group": "purity",
+   "severity": "blocker",
+   "human_review": true,
+   "reason_template": "Purity is at most {purity_mol_pct_high} mol%, below 90% even on the most generous proton count. Reporting needs a PI decision, the reason it could not be purified stated in the SI, and a purity-corrected or internal-standard NMR yield. Grade capped at S-; a stated reason cannot lift it above S-."
+  },
+  {
+   "id": "PUR-SOLVENT-ONLY",
+   "title": "Below 95% only because of residual common solvent",
+   "standard_quote": "To minimize solvent peaks, you can repeatedly evaporate your sample from CDCl3 (or any other NMR solvent), sometimes directly in your NMR tube.",
+   "nucleus": "1H",
+   "condition": {
+    "all": [
+     {
+      "feature": "purity_mol_pct_low",
+      "op": "<",
+      "value": 95
+     },
+     {
+      "feature": "purity_excl_solvents_mol_pct_low",
+      "op": ">=",
+      "value": 95
+     }
+    ]
+   },
+   "effect": "flag",
+   "notches": 0,
+   "cap_grade": "",
+   "group": "purity",
+   "severity": "minor",
+   "human_review": true,
+   "reason_template": "Purity is below 95% only because of residual common solvent (max {common_solvent_max_equiv} equiv per product); without solvents it is {purity_excl_solvents_mol_pct_low}-{purity_excl_solvents_mol_pct_high} mol%. Re-evaporating from CDCl3 should fix this. Reviewer: the standard does not say whether solvent counts against the 95% aim (open question); this rubric counts it."
+  },
+  {
+   "id": "SOL-YIELD-CHECK",
+   "title": "Residual common solvent large enough to check the yield",
+   "standard_quote": "there should not be so much that the yield calculation is no longer accurate, or interfere with assigning peaks in your 13C NMR.",
+   "nucleus": "1H",
+   "condition": {
+    "feature": "common_solvent_max_equiv",
+    "op": ">=",
+    "value": 0.1
+   },
+   "effect": "flag",
+   "notches": 0,
+   "cap_grade": "",
+   "group": "solvent",
+   "severity": "minor",
+   "human_review": true,
+   "reason_template": "{common_solvent_max_equiv} equiv of a common solvent per product are present. This already lowers the purity-based grade; no extra notch (solvent is the most forgivable impurity). Reviewer: convert to wt% with the molecular weights and check the reported yield was corrected if it exceeds about 2 wt%."
+  },
+  {
+   "id": "IMP-TALLEST-1H",
+   "title": "An impurity is the tallest 1H peak",
+   "standard_quote": "Any impurities, including starting material, solvents, or grease, must be minimized.",
+   "nucleus": "1H",
+   "condition": {
+    "feature": "tallest_peak_class",
+    "op": "in",
+    "value": [
+     "unknown",
+     "starting_material",
+     "common_solvent"
+    ]
+   },
+   "effect": "flag",
+   "notches": 0,
+   "cap_grade": "",
+   "group": "impurity_identity",
+   "severity": "major",
+   "human_review": true,
+   "reason_template": "The tallest 1H peak is classed as {tallest_peak_class}, not the product. Reviewer: confirm the classification and that the purity estimate reflects it."
+  },
+  {
+   "id": "IMP-LABELS",
+   "title": "Impurities labelled on the page",
+   "standard_quote": "Any impurities, including starting material, solvents, or grease, must be minimized.",
+   "nucleus": "any",
+   "condition": {
+    "all": [
+     {
+      "feature": "impurity_labels_on_page",
+      "op": "not_null"
+     },
+     {
+      "feature": "impurity_labels_on_page",
+      "op": "!=",
+      "value": []
+     }
+    ]
+   },
+   "effect": "flag",
+   "notches": 0,
+   "cap_grade": "",
+   "group": "impurity_identity",
+   "severity": "cosmetic",
+   "human_review": false,
+   "reason_template": "Impurities labelled on the page: {impurity_labels_on_page}."
+  },
+  {
+   "id": "GRS-VISIBLE",
+   "title": "Grease visible (small amount)",
+   "standard_quote": "Solvent and grease are probably the most forgivable",
+   "nucleus": "1H",
+   "condition": {
+    "all": [
+     {
+      "feature": "grease_h_equiv",
+      "op": ">=",
+      "value": 0.2
+     },
+     {
+      "feature": "grease_h_equiv",
+      "op": "<",
+      "value": 1
+     }
+    ]
+   },
+   "effect": "flag",
+   "notches": 0,
+   "cap_grade": "",
+   "group": "grease",
+   "severity": "cosmetic",
+   "human_review": false,
+   "reason_template": "Grease is visible ({grease_h_equiv} H-equiv). It should be minimized, but the amount is below the level that affects yield accuracy, so nothing is deducted."
+  },
+  {
+   "id": "GRS-YIELD",
+   "title": "Grease enough to affect yield accuracy",
+   "standard_quote": "there should not be so much that the yield calculation is no longer accurate, or interfere with assigning peaks in your 13C NMR.",
+   "nucleus": "1H",
+   "condition": {
+    "any": [
+     {
+      "feature": "grease_h_equiv",
+      "op": ">=",
+      "value": 1
+     },
+     {
+      "all": [
+       {
+        "feature": "grease_h_equiv",
+        "op": "is_null"
+       },
+       {
+        "feature": "grease_ratio",
+        "op": ">=",
+        "value": 0.5
+       }
+      ]
+     }
+    ]
+   },
+   "effect": "deduct",
+   "notches": 1,
+   "cap_grade": "",
+   "group": "grease",
+   "severity": "minor",
+   "human_review": false,
+   "reason_template": "Grease totals {grease_h_equiv} H-equiv (peak height ratio {grease_ratio}), roughly 2-4 wt% or more for a product of MW about 300. That is enough to distort the yield."
+  },
+  {
+   "id": "GRS-HEAVY",
+   "title": "Heavy grease or grease taller than the product",
+   "standard_quote": "there should not be so much that the yield calculation is no longer accurate, or interfere with assigning peaks in your 13C NMR.",
+   "nucleus": "1H",
+   "condition": {
+    "any": [
+     {
+      "feature": "grease_h_equiv",
+      "op": ">=",
+      "value": 3
+     },
+     {
+      "feature": "grease_ratio",
+      "op": ">=",
+      "value": 1
+     },
+     {
+      "feature": "tallest_peak_class",
+      "op": "in",
+      "value": [
+       "grease",
+       "silicone_grease"
+      ]
+     }
+    ]
+   },
+   "effect": "deduct",
+   "notches": 1,
+   "cap_grade": "",
+   "group": "grease",
+   "severity": "major",
+   "human_review": false,
+   "reason_template": "Heavy grease: {grease_h_equiv} H-equiv, peak height ratio {grease_ratio} of the tallest product peak, tallest peak class {tallest_peak_class}. The yield is clearly inaccurate."
+  },
+  {
+   "id": "C13-INTERFERENCE",
+   "title": "Non-product peak dominates the 13C spectrum",
+   "standard_quote": "there should not be so much that the yield calculation is no longer accurate, or interfere with assigning peaks in your 13C NMR.",
+   "nucleus": "13C",
+   "condition": {
+    "any": [
+     {
+      "feature": "tallest_peak_class",
+      "op": "in",
+      "value": [
+       "grease",
+       "silicone_grease",
+       "common_solvent",
+       "unknown",
+       "starting_material"
+      ]
+     },
+     {
+      "feature": "grease_ratio",
+      "op": ">=",
+      "value": 1
+     }
+    ]
+   },
+   "effect": "deduct",
+   "notches": 1,
+   "cap_grade": "",
+   "group": "c13_interference",
+   "severity": "major",
+   "human_review": true,
+   "reason_template": "In the 13C spectrum a non-product peak is the tallest or as tall as the product carbons (tallest class {tallest_peak_class}, grease ratio {grease_ratio}). Reviewer: check whether any listed product carbon overlaps these peaks."
+  },
+  {
+   "id": "ISO-UNREPORTED",
+   "title": "Minor isomer integrated but not reported",
+   "standard_quote": "If there are isomers that are inseparable, they must be noted in the main text and in the characterization section.",
+   "nucleus": "1H",
+   "condition": {
+    "all": [
+     {
+      "feature": "possible_minor_isomer",
+      "op": "is_true"
+     },
+     {
+      "feature": "ctx_isomers_reported",
+      "op": "is_false"
+     }
+    ]
+   },
+   "effect": "deduct",
+   "notches": 2,
+   "cap_grade": "",
+   "group": "isomer",
+   "severity": "major",
+   "human_review": true,
+   "reason_template": "The integrals suggest a minor isomer (two or more integrals between 0.05 and 0.4), and the author states the isomer ratio is not reported. Inseparable isomers must be noted in the main text and in the characterization section."
+  },
+  {
+   "id": "ISO-CHECK",
+   "title": "Possible minor isomer, reporting unknown",
+   "standard_quote": "If there are isomers that are inseparable, they must be noted in the main text and in the characterization section.",
+   "nucleus": "1H",
+   "condition": {
+    "all": [
+     {
+      "feature": "possible_minor_isomer",
+      "op": "is_true"
+     },
+     {
+      "feature": "ctx_isomers_reported",
+      "op": "is_null"
+     }
+    ]
+   },
+   "effect": "flag",
+   "notches": 0,
+   "cap_grade": "",
+   "group": "isomer",
+   "severity": "major",
+   "human_review": true,
+   "reason_template": "The integrals suggest a minor isomer is being integrated. Reviewer: check that the isomer ratio is stated in the main text and in the characterization entry."
+  },
+  {
+   "id": "DIL-SOLVENT-TALLEST",
+   "title": "Residual solvent or water is the highest peak (dilute sample)",
+   "standard_quote": "The sample should not be excessively dilute, meaning that residual proton of your NMR solvent and water should not be your highest peaks in the 1H NMR.",
+   "nucleus": "1H",
+   "condition": {
+    "any": [
+     {
+      "feature": "tallest_peak_class",
+      "op": "in",
+      "value": [
+       "residual_solvent",
+       "water"
+      ]
+     },
+     {
+      "feature": "residual_solvent_ratio",
+      "op": ">",
+      "value": 1
+     },
+     {
+      "feature": "water_ratio",
+      "op": ">",
+      "value": 1
+     }
+    ]
+   },
+   "effect": "deduct",
+   "notches": 1,
+   "cap_grade": "",
+   "group": "dilution",
+   "severity": "major",
+   "human_review": false,
+   "reason_template": "The sample is too dilute: tallest peak class {tallest_peak_class}, residual-solvent/product height ratio {residual_solvent_ratio}, water/product ratio {water_ratio}."
+  },
+  {
+   "id": "DIL-EXCESSIVE",
+   "title": "Residual solvent or water at least 3x the product",
+   "standard_quote": "The sample should not be excessively dilute, meaning that residual proton of your NMR solvent and water should not be your highest peaks in the 1H NMR.",
+   "nucleus": "1H",
+   "condition": {
+    "any": [
+     {
+      "feature": "residual_solvent_ratio",
+      "op": ">=",
+      "value": 3
+     },
+     {
+      "feature": "water_ratio",
+      "op": ">=",
+      "value": 3
+     }
+    ]
+   },
+   "effect": "deduct",
+   "notches": 1,
+   "cap_grade": "",
+   "group": "dilution",
+   "severity": "major",
+   "human_review": false,
+   "reason_template": "Excessively dilute: residual solvent or water is at least three times the tallest product peak (solvent ratio {residual_solvent_ratio}, water ratio {water_ratio}). Small impurities sink into the noise at this dilution."
+  },
+  {
+   "id": "NOISE-1H-CHECK",
+   "title": "1H baseline somewhat noisy",
+   "standard_quote": "The sample should not be excessively dilute, meaning that residual proton of your NMR solvent and water should not be your highest peaks in the 1H NMR.",
+   "nucleus": "1H",
+   "condition": {
+    "all": [
+     {
+      "feature": "baseline_noise_fraction",
+      "op": ">",
+      "value": 0.01
+     },
+     {
+      "feature": "baseline_noise_fraction",
+      "op": "<=",
+      "value": 0.02
+     }
+    ]
+   },
+   "effect": "flag",
+   "notches": 0,
+   "cap_grade": "",
+   "group": "dilution",
+   "severity": "minor",
+   "human_review": true,
+   "reason_template": "1H baseline noise is {baseline_noise_fraction} of the display height, so impurities near the noise level may not be visible. Reviewer: check whether the sample was too dilute."
+  },
+  {
+   "id": "NOISE-1H",
+   "title": "1H noise high enough to hide impurities",
+   "standard_quote": "The sample should not be excessively dilute, meaning that residual proton of your NMR solvent and water should not be your highest peaks in the 1H NMR.",
+   "nucleus": "1H",
+   "condition": {
+    "feature": "baseline_noise_fraction",
+    "op": ">",
+    "value": 0.02
+   },
+   "effect": "deduct",
+   "notches": 1,
+   "cap_grade": "",
+   "group": "dilution",
+   "severity": "major",
+   "human_review": true,
+   "reason_template": "1H baseline noise is {baseline_noise_fraction} of the display height (dilute sample or too few scans); impurities of a few percent of a product proton cannot be told from noise."
+  },
+  {
+   "id": "DISP-LOW",
+   "title": "Tallest peak well below 3/4 of display height",
+   "standard_quote": "Also, the tallest peak in your 1H NMR spectrum should rise to about ¾ up the total display height.",
+   "nucleus": "1H",
+   "condition": {
+    "feature": "tallest_peak_fraction",
+    "op": "<",
+    "value": 0.6
+   },
+   "effect": "deduct",
+   "notches": 1,
+   "cap_grade": "",
+   "group": "display_height",
+   "severity": "minor",
+   "human_review": false,
+   "reason_template": "The tallest peak ({tallest_peak_class}) reaches only {tallest_peak_fraction} of the display height; the standard asks for about 3/4 (accepted 0.60-0.90)."
+  },
+  {
+   "id": "DISP-PRODUCT-CLIPPED",
+   "title": "Tallest product peak clipped",
+   "standard_quote": "Also, the tallest peak in your 1H NMR spectrum should rise to about ¾ up the total display height.",
+   "nucleus": "1H",
+   "condition": {
+    "all": [
+     {
+      "feature": "tallest_peak_clipped",
+      "op": "is_true"
+     },
+     {
+      "feature": "tallest_peak_class",
+      "op": "==",
+      "value": "product"
+     }
+    ]
+   },
+   "effect": "deduct",
+   "notches": 1,
+   "cap_grade": "",
+   "group": "display_height",
+   "severity": "minor",
+   "human_review": false,
+   "reason_template": "The tallest product peak runs off the top of the frame (clipped: {tallest_peak_clipped}); the standard asks for about 3/4 of the display height."
+  },
+  {
+   "id": "DISP-HIGH-FLAG",
+   "title": "Tallest peak above about 3/4 (not a clipped product peak)",
+   "standard_quote": "Also, the tallest peak in your 1H NMR spectrum should rise to about ¾ up the total display height.",
+   "nucleus": "1H",
+   "condition": {
+    "all": [
+     {
+      "feature": "tallest_peak_fraction",
+      "op": ">",
+      "value": 0.9
+     },
+     {
+      "not": {
+       "all": [
+        {
+         "feature": "tallest_peak_clipped",
+         "op": "is_true"
+        },
+        {
+         "feature": "tallest_peak_class",
+         "op": "==",
+         "value": "product"
+        }
+       ]
+      }
+     }
+    ]
+   },
+   "effect": "flag",
+   "notches": 0,
+   "cap_grade": "",
+   "group": "display_height",
+   "severity": "cosmetic",
+   "human_review": false,
+   "reason_template": "The tallest peak ({tallest_peak_class}) rises to {tallest_peak_fraction} of the display height (clipped: {tallest_peak_clipped}). Not deducted: raising the scale shows small peaks better, and solvent/water dominance is charged by the dilution rules."
+  },
+  {
+   "id": "HIDE-LOW-PRODUCT-CHECK",
+   "title": "Product signals displayed small",
+   "standard_quote": "In particular, it is not acceptable to use a low signal height to hide impurities in your spectrum.",
+   "nucleus": "1H",
+   "condition": {
+    "all": [
+     {
+      "feature": "tallest_product_peak_fraction",
+      "op": ">=",
+      "value": 0.2
+     },
+     {
+      "feature": "tallest_product_peak_fraction",
+      "op": "<",
+      "value": 0.4
+     }
+    ]
+   },
+   "effect": "flag",
+   "notches": 0,
+   "cap_grade": "",
+   "group": "hiding",
+   "severity": "major",
+   "human_review": true,
+   "reason_template": "The tallest product peak reaches only {tallest_product_peak_fraction} of the display height, so few-percent impurities are squeezed toward the baseline. Reviewer: re-plot with the product at about 3/4 and look for hidden impurities."
+  },
+  {
+   "id": "HIDE-CAP",
+   "title": "Product signal height low enough to hide impurities",
+   "standard_quote": "In particular, it is not acceptable to use a low signal height to hide impurities in your spectrum.",
+   "nucleus": "1H",
+   "condition": {
+    "feature": "tallest_product_peak_fraction",
+    "op": "<",
+    "value": 0.2
+   },
+   "effect": "cap",
+   "notches": 0,
+   "cap_grade": "S",
+   "group": "hiding",
+   "severity": "blocker",
+   "human_review": true,
+   "reason_template": "The tallest product peak reaches only {tallest_product_peak_fraction} of the display height. At this scale impurities are effectively hidden, which the standard calls not acceptable. Grade capped at S until re-plotted with the product at about 3/4 and checked."
+  },
+  {
+   "id": "C13-LOW-DISPLAY",
+   "title": "13C spectrum plotted with low signal height",
+   "standard_quote": "In particular, it is not acceptable to use a low signal height to hide impurities in your spectrum.",
+   "nucleus": "13C",
+   "condition": {
+    "feature": "tallest_peak_fraction",
+    "op": "<",
+    "value": 0.375
+   },
+   "effect": "flag",
+   "notches": 0,
+   "cap_grade": "",
+   "group": "hiding",
+   "severity": "minor",
+   "human_review": true,
+   "reason_template": "The tallest 13C peak reaches only {tallest_peak_fraction} of the display height, so weak or impurity carbons may be invisible. Reviewer: check (the standard states the height rule for 1H; open question)."
+  },
+  {
+   "id": "INT-MISSING",
+   "title": "1H integrals not displayed",
+   "standard_quote": "Integration for 1H NMR and peak picking for 13C NMR should be displayed.",
+   "nucleus": "1H",
+   "condition": {
+    "feature": "integrals_shown",
+    "op": "is_false"
+   },
+   "effect": "deduct",
+   "notches": 2,
+   "cap_grade": "",
+   "group": "data_display",
+   "severity": "major",
+   "human_review": false,
+   "reason_template": "Integrals are not displayed on the 1H spectrum, so a reader cannot check proton counts or purity."
+  },
+  {
+   "id": "C13-PEAKPICK-MISSING",
+   "title": "13C peak picking not displayed",
+   "standard_quote": "Integration for 1H NMR and peak picking for 13C NMR should be displayed.",
+   "nucleus": "13C",
+   "condition": {
+    "feature": "peak_labels_shown",
+    "op": "is_false"
+   },
+   "effect": "deduct",
+   "notches": 1,
+   "cap_grade": "",
+   "group": "data_display",
+   "severity": "major",
+   "human_review": false,
+   "reason_template": "13C peak positions (peak picking) are not displayed, so the spectrum cannot be matched to the listed data."
+  },
+  {
+   "id": "INT-NONINT-ONE",
+   "title": "One integral far from a whole number",
+   "standard_quote": "The spectra you present in your Supporting Information file should provide evidence for identity and purity of the compounds you claim in your manuscript.",
+   "nucleus": "1H",
+   "condition": {
+    "feature": "integral_nonint_count",
+    "op": "==",
+    "value": 1
+   },
+   "effect": "flag",
+   "notches": 0,
+   "cap_grade": "",
+   "group": "integration",
+   "severity": "cosmetic",
+   "human_review": false,
+   "reason_template": "One displayed integral is more than 0.15 from a whole number."
+  },
+  {
+   "id": "WIN-1H-TRUNC",
+   "title": "1H window cuts off part of the recommended range",
+   "standard_quote": "In general, I recommend a window of 10.5 ppm to –0.5 ppm for 1H NMR spectra and 210 ppm to –10 ppm for 13C NMR spectra.",
+   "nucleus": "1H",
+   "condition": {
+    "any": [
+     {
+      "feature": "window_left_ppm",
+      "op": "<",
+      "value": 9.5
+     },
+     {
+      "feature": "window_right_ppm",
+      "op": ">",
+      "value": 0
+     }
+    ]
+   },
+   "effect": "deduct",
+   "notches": 1,
+   "cap_grade": "",
+   "group": "window",
+   "severity": "major",
+   "human_review": true,
+   "reason_template": "The 1H window {window_left_ppm} to {window_right_ppm} ppm leaves out part of the recommended 10.5 to -0.5 ppm range, where impurities (aldehyde or acid protons, silicone grease near 0.07 ppm) could sit unseen. Reviewer: check the full spectrum."
+  },
+  {
+   "id": "WIN-1H-TRUNC-SEVERE",
+   "title": "1H window hides a large region",
+   "standard_quote": "In general, I recommend a window of 10.5 ppm to –0.5 ppm for 1H NMR spectra and 210 ppm to –10 ppm for 13C NMR spectra.",
+   "nucleus": "1H",
+   "condition": {
+    "any": [
+     {
+      "feature": "window_left_ppm",
+      "op": "<",
+      "value": 8
+     },
+     {
+      "feature": "window_right_ppm",
+      "op": ">",
+      "value": 0.7
+     }
+    ]
+   },
+   "effect": "deduct",
+   "notches": 1,
+   "cap_grade": "",
+   "group": "window",
+   "severity": "major",
+   "human_review": true,
+   "reason_template": "The 1H window {window_left_ppm} to {window_right_ppm} ppm hides a large region (aromatic or grease region), so the page cannot show the sample is pure."
+  },
+  {
+   "id": "WIN-1H-WIDE",
+   "title": "1H window much wider than recommended",
+   "standard_quote": "In general, I recommend a window of 10.5 ppm to –0.5 ppm for 1H NMR spectra and 210 ppm to –10 ppm for 13C NMR spectra.",
+   "nucleus": "1H",
+   "condition": {
+    "all": [
+     {
+      "feature": "window_deviation_ppm",
+      "op": ">",
+      "value": 1
+     },
+     {
+      "feature": "window_left_ppm",
+      "op": ">=",
+      "value": 9.5
+     },
+     {
+      "feature": "window_right_ppm",
+      "op": "<=",
+      "value": 0
+     }
+    ]
+   },
+   "effect": "deduct",
+   "notches": 1,
+   "cap_grade": "",
+   "group": "window",
+   "severity": "minor",
+   "human_review": true,
+   "reason_template": "The 1H window {window_left_ppm} to {window_right_ppm} ppm is {window_deviation_ppm} ppm wider than the recommended 10.5 to -0.5 ppm. Reviewer: waive if the compound has signals beyond the range (CO2H, CHO, chelated OH)."
+  },
+  {
+   "id": "WIN-1H-SMALL",
+   "title": "1H window slightly off the recommended range",
+   "standard_quote": "In general, I recommend a window of 10.5 ppm to –0.5 ppm for 1H NMR spectra and 210 ppm to –10 ppm for 13C NMR spectra.",
+   "nucleus": "1H",
+   "condition": {
+    "all": [
+     {
+      "feature": "window_deviation_ppm",
+      "op": ">",
+      "value": 0.25
+     },
+     {
+      "feature": "window_deviation_ppm",
+      "op": "<=",
+      "value": 1
+     }
+    ]
+   },
+   "effect": "flag",
+   "notches": 0,
+   "cap_grade": "",
+   "group": "window",
+   "severity": "cosmetic",
+   "human_review": false,
+   "reason_template": "The 1H window is {window_left_ppm} to {window_right_ppm} ppm, up to {window_deviation_ppm} ppm off the recommended 10.5 to -0.5 ppm (recommendation only)."
+  },
+  {
+   "id": "WIN-13C-TRUNC",
+   "title": "13C window cuts off part of the recommended range",
+   "standard_quote": "In general, I recommend a window of 10.5 ppm to –0.5 ppm for 1H NMR spectra and 210 ppm to –10 ppm for 13C NMR spectra.",
+   "nucleus": "13C",
+   "condition": {
+    "any": [
+     {
+      "feature": "window_left_ppm",
+      "op": "<",
+      "value": 200
+     },
+     {
+      "feature": "window_right_ppm",
+      "op": ">",
+      "value": 0
+     }
+    ]
+   },
+   "effect": "deduct",
+   "notches": 1,
+   "cap_grade": "",
+   "group": "window",
+   "severity": "major",
+   "human_review": true,
+   "reason_template": "The 13C window {window_left_ppm} to {window_right_ppm} ppm cuts off part of the recommended 210 to -10 ppm range (ketone carbonyls up to about 215 ppm, silyl or high-field carbons near 0 ppm). Reviewer: check no product carbon is missing."
+  },
+  {
+   "id": "WIN-13C-WIDE",
+   "title": "13C window much wider than recommended",
+   "standard_quote": "In general, I recommend a window of 10.5 ppm to –0.5 ppm for 1H NMR spectra and 210 ppm to –10 ppm for 13C NMR spectra.",
+   "nucleus": "13C",
+   "condition": {
+    "all": [
+     {
+      "feature": "window_deviation_ppm",
+      "op": ">",
+      "value": 10
+     },
+     {
+      "feature": "window_left_ppm",
+      "op": ">=",
+      "value": 200
+     },
+     {
+      "feature": "window_right_ppm",
+      "op": "<=",
+      "value": 0
+     }
+    ]
+   },
+   "effect": "deduct",
+   "notches": 1,
+   "cap_grade": "",
+   "group": "window",
+   "severity": "minor",
+   "human_review": true,
+   "reason_template": "The 13C window {window_left_ppm} to {window_right_ppm} ppm is {window_deviation_ppm} ppm off the recommended 210 to -10 ppm. Reviewer: waive if carbons lie outside the range."
+  },
+  {
+   "id": "WIN-13C-SMALL",
+   "title": "13C window slightly off the recommended range",
+   "standard_quote": "In general, I recommend a window of 10.5 ppm to –0.5 ppm for 1H NMR spectra and 210 ppm to –10 ppm for 13C NMR spectra.",
+   "nucleus": "13C",
+   "condition": {
+    "all": [
+     {
+      "feature": "window_deviation_ppm",
+      "op": ">",
+      "value": 5
+     },
+     {
+      "feature": "window_deviation_ppm",
+      "op": "<=",
+      "value": 10
+     }
+    ]
+   },
+   "effect": "flag",
+   "notches": 0,
+   "cap_grade": "",
+   "group": "window",
+   "severity": "cosmetic",
+   "human_review": false,
+   "reason_template": "The 13C window is {window_left_ppm} to {window_right_ppm} ppm, up to {window_deviation_ppm} ppm off the recommended 210 to -10 ppm (recommendation only)."
+  },
+  {
+   "id": "PRES-FREQ-REQUIRED",
+   "title": "Instrument frequency missing where the journal requires it",
+   "standard_quote": "Some journals, including Org. Lett., also require the indication of instrument frequency and NMR solvent on the displayed page.",
+   "nucleus": "any",
+   "condition": {
+    "all": [
+     {
+      "feature": "frequency_shown",
+      "op": "is_false"
+     },
+     {
+      "any": [
+       {
+        "feature": "ctx_journal_requires_freq_solvent",
+        "op": "is_true"
+       },
+       {
+        "feature": "ctx_journal",
+        "op": "in",
+        "value": [
+         "Org. Lett.",
+         "Org. Lett",
+         "Org Lett",
+         "Organic Letters",
+         "OL"
+        ]
+       }
+      ]
+     }
+    ]
+   },
+   "effect": "deduct",
+   "notches": 1,
+   "cap_grade": "",
+   "group": "presentation",
+   "severity": "major",
+   "human_review": false,
+   "reason_template": "The instrument frequency is not shown on the page, but the target journal ({ctx_journal}) requires it."
+  },
+  {
+   "id": "PRES-SOLVENT-REQUIRED",
+   "title": "NMR solvent missing where the journal requires it",
+   "standard_quote": "Some journals, including Org. Lett., also require the indication of instrument frequency and NMR solvent on the displayed page.",
+   "nucleus": "any",
+   "condition": {
+    "all": [
+     {
+      "feature": "solvent_shown",
+      "op": "is_false"
+     },
+     {
+      "any": [
+       {
+        "feature": "ctx_journal_requires_freq_solvent",
+        "op": "is_true"
+       },
+       {
+        "feature": "ctx_journal",
+        "op": "in",
+        "value": [
+         "Org. Lett.",
+         "Org. Lett",
+         "Org Lett",
+         "Organic Letters",
+         "OL"
+        ]
+       }
+      ]
+     }
+    ]
+   },
+   "effect": "deduct",
+   "notches": 1,
+   "cap_grade": "",
+   "group": "presentation",
+   "severity": "major",
+   "human_review": false,
+   "reason_template": "The NMR solvent is not shown on the page, but the target journal ({ctx_journal}) requires it."
+  },
+  {
+   "id": "PRES-FREQ-SOLVENT-CHECK",
+   "title": "Frequency or solvent missing, journal requirement unknown",
+   "standard_quote": "Before you start putting together the SI, check the journal’s standards!",
+   "nucleus": "any",
+   "condition": {
+    "all": [
+     {
+      "any": [
+       {
+        "feature": "frequency_shown",
+        "op": "is_false"
+       },
+       {
+        "feature": "solvent_shown",
+        "op": "is_false"
+       }
+      ]
+     },
+     {
+      "feature": "ctx_journal_requires_freq_solvent",
+      "op": "is_null"
+     },
+     {
+      "not": {
+       "feature": "ctx_journal",
+       "op": "in",
+       "value": [
+        "Org. Lett.",
+        "Org. Lett",
+        "Org Lett",
+        "Organic Letters",
+        "OL"
+       ]
+      }
+     }
+    ]
+   },
+   "effect": "flag",
+   "notches": 0,
+   "cap_grade": "",
+   "group": "presentation",
+   "severity": "minor",
+   "human_review": true,
+   "reason_template": "Frequency shown: {frequency_shown}; solvent shown: {solvent_shown}. Reviewer: check whether the target journal requires both on the page (Org. Lett. does)."
+  },
+  {
+   "id": "PRES-INSETS-COMPLEX",
+   "title": "Complex compound shown without insets",
+   "standard_quote": "in order to clearly exhibit the couplings in complex compounds (especially diagnostic one that allow you to assign the structure or stereochemistry), you should use insets with relevant parts zoomed in.",
+   "nucleus": "1H",
+   "condition": {
+    "all": [
+     {
+      "feature": "ctx_high_complexity",
+      "op": "is_true"
+     },
+     {
+      "feature": "insets_present",
+      "op": "is_false"
+     }
+    ]
+   },
+   "effect": "deduct",
+   "notches": 1,
+   "cap_grade": "",
+   "group": "presentation",
+   "severity": "minor",
+   "human_review": false,
+   "reason_template": "The author marks the compound as complex, but there are no zoomed insets showing the diagnostic couplings."
+  },
+  {
+   "id": "PRES-INSETS-CHECK",
+   "title": "No insets (complexity not stated)",
+   "standard_quote": "you should use insets with relevant parts zoomed in.",
+   "nucleus": "1H",
+   "condition": {
+    "all": [
+     {
+      "feature": "ctx_high_complexity",
+      "op": "is_null"
+     },
+     {
+      "feature": "insets_present",
+      "op": "is_false"
+     }
+    ]
+   },
+   "effect": "flag",
+   "notches": 0,
+   "cap_grade": "",
+   "group": "presentation",
+   "severity": "cosmetic",
+   "human_review": false,
+   "reason_template": "No zoomed insets. If the structure or stereochemistry assignment rests on coupling patterns, insets are expected."
+  },
+  {
+   "id": "LEG-POOR",
+   "title": "Page illegible",
+   "standard_quote": "The spectra you present in your Supporting Information file should provide evidence for identity and purity of the compounds you claim in your manuscript.",
+   "nucleus": "any",
+   "condition": {
+    "feature": "legibility",
+    "op": "==",
+    "value": "poor"
+   },
+   "effect": "cap",
+   "notches": 0,
+   "cap_grade": "S",
+   "group": "legibility",
+   "severity": "blocker",
+   "human_review": true,
+   "reason_template": "The page is a scan or blurred (legibility {legibility}) and its labels cannot be read, so it cannot serve as evidence of identity or purity. Grade capped at S."
+  },
+  {
+   "id": "C13-SNR",
+   "title": "Weakest 13C peak below S/N 1.5 (raw data)",
+   "standard_quote": "13C NMR spectra need to be collected with enough scans that the weakest peak has a signal to noise ratio of at least 1.5.",
+   "nucleus": "13C",
+   "condition": {
+    "feature": "c13_weakest_snr",
+    "op": "<",
+    "value": 1.5
+   },
+   "effect": "cap",
+   "notches": 0,
+   "cap_grade": "S",
+   "group": "c13_snr",
+   "severity": "blocker",
+   "human_review": true,
+   "reason_template": "The weakest 13C peak has S/N {c13_weakest_snr}, below the required 1.5. Collect more scans. Grade capped at S."
+  },
+  {
+   "id": "C13-NOISY",
+   "title": "Very noisy 13C trace (image)",
+   "standard_quote": "13C NMR spectra need to be collected with enough scans that the weakest peak has a signal to noise ratio of at least 1.5.",
+   "nucleus": "13C",
+   "condition": {
+    "all": [
+     {
+      "feature": "c13_weakest_snr",
+      "op": "is_null"
+     },
+     {
+      "feature": "baseline_noise_fraction",
+      "op": ">",
+      "value": 0.05
+     }
+    ]
+   },
+   "effect": "deduct",
+   "notches": 1,
+   "cap_grade": "",
+   "group": "c13_snr",
+   "severity": "major",
+   "human_review": true,
+   "reason_template": "13C baseline noise is {baseline_noise_fraction} of the display height, so the weakest carbons (quaternary, C-F coupled) are probably near or below S/N 1.5. Reviewer: count the expected carbons or request the FID."
+  },
+  {
+   "id": "C13-NOISE-CHECK",
+   "title": "13C noise worth checking (image)",
+   "standard_quote": "13C NMR spectra need to be collected with enough scans that the weakest peak has a signal to noise ratio of at least 1.5.",
+   "nucleus": "13C",
+   "condition": {
+    "all": [
+     {
+      "feature": "c13_weakest_snr",
+      "op": "is_null"
+     },
+     {
+      "feature": "baseline_noise_fraction",
+      "op": ">",
+      "value": 0.02
+     },
+     {
+      "feature": "baseline_noise_fraction",
+      "op": "<=",
+      "value": 0.05
+     }
+    ]
+   },
+   "effect": "flag",
+   "notches": 0,
+   "cap_grade": "",
+   "group": "c13_snr",
+   "severity": "minor",
+   "human_review": true,
+   "reason_template": "13C baseline noise is {baseline_noise_fraction} of the display height. Reviewer: confirm the weakest expected carbon clearly clears S/N 1.5."
+  },
+  {
+   "id": "CAL-1H",
+   "title": "1H referencing offset",
+   "standard_quote": "NMR data should be presented in a way that conforms to journal standards.",
+   "nucleus": "1H",
+   "condition": {
+    "any": [
+     {
+      "feature": "calibration_offset_ppm",
+      "op": ">",
+      "value": 0.03
+     },
+     {
+      "feature": "calibration_offset_ppm",
+      "op": "<",
+      "value": -0.03
+     }
+    ]
+   },
+   "effect": "flag",
+   "notches": 0,
+   "cap_grade": "",
+   "group": "data_quality",
+   "severity": "minor",
+   "human_review": true,
+   "reason_template": "The residual solvent peak is {calibration_offset_ppm} ppm from its expected position. Reviewer: check the referencing and the shifts reported in the text (not graded: the standard does not address calibration)."
+  },
+  {
+   "id": "CAL-13C",
+   "title": "13C referencing offset",
+   "standard_quote": "NMR data should be presented in a way that conforms to journal standards.",
+   "nucleus": "13C",
+   "condition": {
+    "any": [
+     {
+      "feature": "calibration_offset_ppm",
+      "op": ">",
+      "value": 0.3
+     },
+     {
+      "feature": "calibration_offset_ppm",
+      "op": "<",
+      "value": -0.3
+     }
+    ]
+   },
+   "effect": "flag",
+   "notches": 0,
+   "cap_grade": "",
+   "group": "data_quality",
+   "severity": "minor",
+   "human_review": true,
+   "reason_template": "The solvent peak is {calibration_offset_ppm} ppm from its expected position. Reviewer: check the referencing and the reported shifts (not graded)."
+  },
+  {
+   "id": "BASELINE-DRIFT",
+   "title": "Baseline drift",
+   "standard_quote": "The spectra you present in your Supporting Information file should provide evidence for identity and purity of the compounds you claim in your manuscript.",
+   "nucleus": "any",
+   "condition": {
+    "feature": "baseline_drift_fraction",
+    "op": ">",
+    "value": 0.05
+   },
+   "effect": "flag",
+   "notches": 0,
+   "cap_grade": "",
+   "group": "data_quality",
+   "severity": "minor",
+   "human_review": true,
+   "reason_template": "The baseline drifts by {baseline_drift_fraction} of the display height, which can bias integrals and mask broad impurity signals (not graded: the standard does not address baseline)."
+  },
+  {
+   "id": "RAW-LINEWIDTH",
+   "title": "Broad lines (raw data)",
+   "standard_quote": "in order to clearly exhibit the couplings in complex compounds",
+   "nucleus": "1H",
+   "condition": {
+    "feature": "linewidth_hz",
+    "op": ">",
+    "value": 1.5
+   },
+   "effect": "flag",
+   "notches": 0,
+   "cap_grade": "",
+   "group": "data_quality",
+   "severity": "cosmetic",
+   "human_review": false,
+   "reason_template": "The singlet linewidth is {linewidth_hz} Hz; poor shimming can blur couplings (not graded)."
+  },
+  {
+   "id": "RAW-RELAX-DELAY",
+   "title": "Short relaxation delay (raw data)",
+   "standard_quote": "the aim for all spectra published by the group is 95% or better purity of your claimed compound, by 1H NMR.",
+   "nucleus": "1H",
+   "condition": {
+    "feature": "relaxation_delay_s",
+    "op": "<",
+    "value": 1
+   },
+   "effect": "flag",
+   "notches": 0,
+   "cap_grade": "",
+   "group": "data_quality",
+   "severity": "cosmetic",
+   "human_review": false,
+   "reason_template": "The relaxation delay is {relaxation_delay_s} s; integrals, and so the purity estimate, may not be quantitative (not graded)."
+  }
+ ],
+ "group_max_deduction": {
+  "impurity_unknown": 2,
+  "starting_material": 1,
+  "grease": 2,
+  "c13_interference": 1,
+  "isomer": 2,
+  "dilution": 2,
+  "display_height": 1,
+  "data_display": 2,
+  "integration": 2,
+  "window": 2,
+  "presentation": 3,
+  "c13_snr": 1
+ },
+ "context_modifiers": [
+  {
+   "id": "CM-REASON-BELOW-90",
+   "condition": {
+    "all": [
+     {
+      "feature": "nucleus",
+      "op": "==",
+      "value": "1H"
+     },
+     {
+      "feature": "ctx_low_purity_reason_stated",
+      "op": "is_true"
+     },
+     {
+      "feature": "purity_mol_pct_high",
+      "op": "<",
+      "value": 90
+     }
+    ]
+   },
+   "effect": "add",
+   "notches": 1,
+   "note": "Text-backed: a compound that cannot reach 90% may be reported with the reason stated and a purity-corrected or NMR yield. Adds one notch (N to S-). The PUR-BELOW-90 blocker cap keeps it at S- or lower, below the 90-95% band. Fires only when the whole purity range is below 90%; straddling cases go to human review."
+  },
+  {
+   "id": "CM-UNSTABLE",
+   "condition": {
+    "all": [
+     {
+      "feature": "nucleus",
+      "op": "==",
+      "value": "1H"
+     },
+     {
+      "feature": "ctx_unstable",
+      "op": "is_true"
+     },
+     {
+      "feature": "purity_mol_pct_low",
+      "op": "<",
+      "value": 95
+     }
+    ]
+   },
+   "effect": "flag",
+   "notches": 0,
+   "note": "Instability may explain purity below 95% and may make the two extra repurification attempts impractical. No automatic notch: the text ties relief for instability to the below-90 exception with a stated reason. The spectrum still counts toward the 2-3 per 40 SI limit; the reviewer weighs it."
+  },
+  {
+   "id": "CM-UNSTABLE-NO-REASON",
+   "condition": {
+    "all": [
+     {
+      "feature": "ctx_unstable",
+      "op": "is_true"
+     },
+     {
+      "not": {
+       "feature": "ctx_low_purity_reason_stated",
+       "op": "is_true"
+      }
+     },
+     {
+      "feature": "purity_mol_pct_high",
+      "op": "<",
+      "value": 90
+     }
+    ]
+   },
+   "effect": "flag",
+   "notches": 0,
+   "note": "Unstable compound below 90%, but the SI does not state why it could not be purified. The standard requires that reason, so no notch is restored."
+  },
+  {
+   "id": "CM-SMALL-SAMPLE-DILUTION",
+   "condition": {
+    "all": [
+     {
+      "feature": "nucleus",
+      "op": "==",
+      "value": "1H"
+     },
+     {
+      "feature": "ctx_small_sample",
+      "op": "is_true"
+     },
+     {
+      "any": [
+       {
+        "feature": "tallest_peak_class",
+        "op": "in",
+        "value": [
+         "residual_solvent",
+         "water"
+        ]
+       },
+       {
+        "feature": "residual_solvent_ratio",
+        "op": ">",
+        "value": 1
+       },
+       {
+        "feature": "water_ratio",
+        "op": ">",
+        "value": 1
+       },
+       {
+        "feature": "baseline_noise_fraction",
+        "op": ">",
+        "value": 0.02
+       }
+      ]
+     }
+    ]
+   },
+   "effect": "add",
+   "notches": 1,
+   "note": "Inferred relaxation: a very small sample cannot always be concentrated enough to outgrow the residual solvent and water peaks or to give a quiet baseline. Gives back one dilution/noise notch. It does not touch the display-height rules or the HIDE-CAP blocker (vertical scaling is a plotting choice), grease (the text gives small-scale remedies) or 13C S/N (the remedy is more scans)."
+  },
+  {
+   "id": "CM-SMALL-SAMPLE-GREASE",
+   "condition": {
+    "all": [
+     {
+      "feature": "ctx_small_sample",
+      "op": "is_true"
+     },
+     {
+      "any": [
+       {
+        "feature": "grease_h_equiv",
+        "op": ">=",
+        "value": 1
+       },
+       {
+        "feature": "grease_ratio",
+        "op": ">=",
+        "value": 0.5
+       }
+      ]
+     }
+    ]
+   },
+   "effect": "flag",
+   "notches": 0,
+   "note": "Small scale explains but does not excuse grease: the standard names small scale (<20 mg) and gives the remedies (n-pentane or n-hexane instead of hexanes, glass fiber or a frit instead of cotton, pipette column, prep TLC). The reviewer checks whether they were tried."
+  },
+  {
+   "id": "CM-COMPLEX",
+   "condition": {
+    "all": [
+     {
+      "feature": "nucleus",
+      "op": "==",
+      "value": "1H"
+     },
+     {
+      "feature": "ctx_high_complexity",
+      "op": "is_true"
+     },
+     {
+      "any": [
+       {
+        "feature": "integral_nonint_count",
+        "op": ">=",
+        "value": 2
+       },
+       {
+        "all": [
+         {
+          "feature": "unknown_h_equiv",
+          "op": ">=",
+          "value": 0.05
+         },
+         {
+          "feature": "unknown_max_single_h_equiv",
+          "op": "<",
+          "value": 0.2
+         },
+         {
+          "not": {
+           "feature": "possible_minor_isomer",
+           "op": "is_true"
+          }
+         }
+        ]
+       }
+      ]
+     }
+    ]
+   },
+   "effect": "add",
+   "notches": 1,
+   "note": "Inferred relaxation (weak textual basis: the text links complexity to insets, not leniency). In highly complex products, overlapping multiplets, rotamers and diastereotopic signals make integrals non-integer or get read as small unknowns. Gives back one notch in total, never when a single unknown signal is 0.2 H-equiv or larger, and not for unknowns when a minor isomer is suspected (CM-ISOMERS-REPORTED handles that)."
+  },
+  {
+   "id": "CM-ISOMERS-REPORTED",
+   "condition": {
+    "all": [
+     {
+      "feature": "ctx_isomers_reported",
+      "op": "is_true"
+     },
+     {
+      "feature": "possible_minor_isomer",
+      "op": "is_true"
+     },
+     {
+      "feature": "unknown_h_equiv",
+      "op": ">=",
+      "value": 0.05
+     }
+    ]
+   },
+   "effect": "add",
+   "notches": 1,
+   "note": "The author reports an inseparable isomer mixture, as the standard requires. The minor-isomer signals were probably counted as unidentified impurity, so the UNK-PRESENT notch is given back. The reviewer recomputes purity with the declared mixture as the claimed compound and checks the ratio matches the main text and characterization entry."
+  },
+  {
+   "id": "CM-JOURNAL-NOT-REQUIRED",
+   "condition": {
+    "all": [
+     {
+      "feature": "ctx_journal_requires_freq_solvent",
+      "op": "is_false"
+     },
+     {
+      "any": [
+       {
+        "feature": "frequency_shown",
+        "op": "is_false"
+       },
+       {
+        "feature": "solvent_shown",
+        "op": "is_false"
+       }
+      ]
+     }
+    ]
+   },
+   "effect": "flag",
+   "notches": 0,
+   "note": "The author states the target journal does not require frequency or solvent on the page, so their absence is not deducted."
+  }
+ ],
+ "not_computable_items": [
+  {
+   "item": "Identity: the spectrum matches the claimed structure (shifts, multiplicities, proton counts, number of carbons)",
+   "standard_quote": "The spectra you present in your Supporting Information file should provide evidence for identity and purity of the compounds you claim in your manuscript.",
+   "how_a_human_checks": "Assign the 1H signals (shift, multiplicity, integral) and count the 13C peaks against the unique carbons. Check that the drawn structure and compound number match the main text and the characterization entry."
+  },
+  {
+   "item": "Insets show the diagnostic couplings (not just any zoom), and whether insets are needed at all",
+   "standard_quote": "in order to clearly exhibit the couplings in complex compounds (especially diagnostic one that allow you to assign the structure or stereochemistry), you should use insets with relevant parts zoomed in.",
+   "how_a_human_checks": "Find the couplings that prove structure or stereochemistry (vicinal J for cis/trans, olefin J for E/Z) and confirm an inset resolves them well enough to read J. Supply ctx_high_complexity so PRES-INSETS-COMPLEX can apply."
+  },
+  {
+   "item": "Inseparable isomers are noted in the main text and in the characterization section",
+   "standard_quote": "If there are isomers that are inseparable, they must be noted in the main text and in the characterization section.",
+   "how_a_human_checks": "Search the substrate table or scheme and the characterization entry for the isomer ratio (dr, E/Z, rr). It must appear in both and match the minor-isomer integrals. Supply ctx_isomers_reported."
+  },
+  {
+   "item": "At least two additional repurification attempts for 90-95% samples",
+   "standard_quote": "If, after at least two additional attempts to repurify a sample, the purity is only between 90% and 95%, such spectra are tolerable.",
+   "how_a_human_checks": "For every spectrum flagged PUR-TOLERABLE-BAND or PUR-STRADDLE-95, ask the author or check the notebook for the extra chromatography, crystallization, distillation, pipette-column or prep-TLC rounds. Without them the spectrum is not yet 'tolerable' and should be redone."
+  },
+  {
+   "item": "Below-90% compounds: PI discussion, stated reason, purity-corrected or NMR yield",
+   "standard_quote": "If it is important enough, we can report it in the SI with the reason for why it could not be further purified noted and the yield calculated in a way that accounts for low purity, or with yield reported as an NMR yield with respect to internal standard.",
+   "how_a_human_checks": "Confirm the PI agreed to report the compound, that the characterization entry states the reason (instability, volatility, acid sensitivity) and that the yield is purity-corrected or an NMR yield against a named internal standard."
+  },
+  {
+   "item": "Yield accuracy given the residual solvent and grease content",
+   "standard_quote": "there should not be so much that the yield calculation is no longer accurate, or interfere with assigning peaks in your 13C NMR.",
+   "how_a_human_checks": "Convert to wt% with molecular weights: solvent wt% = equiv x MW(solvent) / MW(product); hydrocarbon grease about H-equiv x 7 g/mol and silicone about H-equiv x 12.3 g/mol, each divided by MW(product). Above about 2 wt%, check the reported yield was corrected."
+  },
+  {
+   "item": "Solvent or grease peaks interfering with 13C peak assignment",
+   "standard_quote": "there should not be so much that the yield calculation is no longer accurate, or interfere with assigning peaks in your 13C NMR.",
+   "how_a_human_checks": "Overlay known impurity shifts (CDCl3: grease about 29.7 ppm, silicone about 1.0 ppm, EtOAc 171.1/60.5/21.0/14.2 ppm) on the 13C peak list and check none coincides with or is mistaken for a product carbon."
+  },
+  {
+   "item": "13C S/N of at least 1.5 when grading from images",
+   "standard_quote": "13C NMR spectra need to be collected with enough scans that the weakest peak has a signal to noise ratio of at least 1.5.",
+   "how_a_human_checks": "Count the visible carbon peaks against the expected unique carbons and zoom on the weakest expected ones (quaternary, carbonyl, C-F doublets). A missing or noise-level carbon fails; request the FID when borderline."
+  },
+  {
+   "item": "Whether a low display height actually hides impurities",
+   "standard_quote": "In particular, it is not acceptable to use a low signal height to hide impurities in your spectrum.",
+   "how_a_human_checks": "Re-plot the raw data with the tallest product peak at about 3/4 of the display height (and then expanded 4-10x) and look for signals invisible on the submitted page. If hidden impurities appear, re-grade from the re-plotted spectrum."
+  },
+  {
+   "item": "Whether impurities are classified correctly (unknown vs common solvent vs starting material vs isomer)",
+   "standard_quote": "In terms of undesirability, unidentified impurities are the worst",
+   "how_a_human_checks": "Check each impurity label and each unknown signal against residual-solvent shift tables and the starting-material spectrum. Reclassifying an 'unknown' as solvent changes the grade a lot; re-run the grading after reclassifying."
+  },
+  {
+   "item": "Conformity to the target journal's SI standards beyond frequency and solvent",
+   "standard_quote": "NMR data should be presented in a way that conforms to journal standards.",
+   "how_a_human_checks": "Read the target journal's author guidelines for spectra (labels, layout, referencing, file format) and check a sample of pages against them."
+  },
+  {
+   "item": "Page layout (two spectra stacked per portrait page is allowed)",
+   "standard_quote": "For many journals, it is okay to stack two NMR on one (portrait-style) page of the SI.",
+   "how_a_human_checks": "No deduction for stacking two spectra. Confirm the target journal allows it and that stacked spectra stay legible."
+  },
+  {
+   "item": "Justified wider windows",
+   "standard_quote": "In general, I recommend a window of 10.5 ppm to –0.5 ppm for 1H NMR spectra and 210 ppm to –10 ppm for 13C NMR spectra.",
+   "how_a_human_checks": "If WIN-1H-WIDE or WIN-13C-WIDE fired, check whether the compound has signals beyond the recommended range (CO2H, CHO, chelated OH, ketone C=O above 210 ppm); if so, lift the deduction."
+  },
+  {
+   "item": "Clarity of the structure drawing (stereochemistry shown, number matches the text)",
+   "standard_quote": "In general, the structure and the number of the compound should be displayed clearly.",
+   "how_a_human_checks": "Check stereocenters, counter-ions and the compound number on the page against the main text and the characterization entry."
+  },
+  {
+   "item": "Whether the compound is a starting material or catalyst rather than a product (purity expectations differ)",
+   "standard_quote": "In general, a slightly impure starting material is not as bad as an impure product",
+   "how_a_human_checks": "Identify substrate and catalyst spectra in the SI. No feature records the role, so any leniency for substrates is a human decision (open question)."
+  },
+  {
+   "item": "Effect of impure starting material or catalyst on failed catalytic reactions",
+   "standard_quote": "you need to beware that even minor impurities can completely shut down catalysis",
+   "how_a_human_checks": "Not an SI grading item. Where failed substrates or negative results are reported, check that substrate and catalyst purity were documented before concluding."
+  },
+  {
+   "item": "Purification practice used to reduce solvent and grease",
+   "standard_quote": "Also, avoid the use of cotton for filtration and use glass fiber or a fritted funnel in its place.",
+   "how_a_human_checks": "Advisory only, not graded. When solvent or grease rules fire, include the remedies in the feedback: co-evaporation from CDCl3, n-pentane or n-hexane instead of hexanes, glass fiber or a frit instead of cotton, pipette columns, prep TLC."
+  }
+ ],
+ "si_level_checks": [
+  {
+   "id": "SI-TOLERABLE-QUOTA",
+   "description": "No more than 2 or 3 of every 40 1H spectra may sit in the 90-95% purity band.",
+   "computation": "Over 1H spectra with purity_estimable true: p_mid = (purity_mol_pct_low + purity_mol_pct_high)/2. n_band = count with 90 <= p_mid < 95 (consistent with purity_basis mid); n_possible = count with PUR-STRADDLE-95 or PUR-STRADDLE-90 fired and not already in n_band. N = number of 1H spectra. PASS if n_band <= max(1, floor(2N/40)); WARN if n_band <= max(1, ceil(3N/40)); FAIL otherwise. Repeat with n_band + n_possible and report both, plus the count using purity_excl_solvents (to show how much is solvent-driven)."
+  },
+  {
+   "id": "SI-MAJORITY-VE",
+   "description": "Most spectra should be in the V or E range.",
+   "computation": "share_VE = count(final grade in {V-, V, V+, E-, E}) / number of graded spectra (1H and 13C, after context modifiers). PASS if share_VE > 0.5, else FAIL. Report the full grade histogram and each nucleus separately, for comparison with the reference SI (Wang & Buchwald, JACS 2016), described as E with occasional E- or V+."
+  },
+  {
+   "id": "SI-S-SHARE",
+   "description": "No more than 15-20% of spectra graded S.",
+   "computation": "share_S = count(final grade in {S+, S}) / number of graded spectra. PASS if share_S <= 0.15; WARN if 0.15 < share_S <= 0.20; FAIL if > 0.20. Also report the 1H-only share."
+  },
+  {
+   "id": "SI-NO-SMINUS-N",
+   "description": "No spectrum graded S- or N.",
+   "computation": "n_bad = count(final grade in {S-, N}). PASS if n_bad == 0, else FAIL and list each with its fired rules."
+  },
+  {
+   "id": "SI-BELOW90-REGISTER",
+   "description": "Every compound below 90% purity needs a PI decision, a stated reason and a corrected or NMR yield.",
+   "computation": "certain = 1H spectra with purity_mol_pct_high < 90; possible = spectra with PUR-STRADDLE-90 fired. FAIL if any certain spectrum lacks ctx_low_purity_reason_stated == true. Put every certain or possible spectrum on the PI discussion list (human review)."
+  },
+  {
+   "id": "SI-ISOMER-REPORTING",
+   "description": "Every spectrum suggesting an inseparable isomer mixture has the isomers reported.",
+   "computation": "m = spectra with possible_minor_isomer true. FAIL if any has ctx_isomers_reported == false; REVIEW listing those with ctx_isomers_reported null; PASS if all are true. Report count(m)."
+  },
+  {
+   "id": "SI-JOURNAL-LABELS",
+   "description": "If the journal requires frequency and solvent, every page shows them.",
+   "computation": "If ctx_journal_requires_freq_solvent is true or ctx_journal is an Org. Lett. variant: n_missing = count(frequency_shown false or solvent_shown false) over all spectra. PASS if n_missing == 0, else FAIL and list the pages. If the journal is unknown, report n_missing as a check item."
+  },
+  {
+   "id": "SI-13C-SNR",
+   "description": "Every 13C spectrum has its weakest peak at S/N 1.5 or better.",
+   "computation": "FAIL if any 13C spectrum has c13_weakest_snr < 1.5. List 13C spectra with c13_weakest_snr null where C13-NOISY or C13-NOISE-CHECK fired, for a human carbon count."
+  },
+  {
+   "id": "SI-STACKING",
+   "description": "At most two spectra stacked per portrait SI page.",
+   "computation": "Count spectra per SI page from the page layout. WARN for any page with more than 2 spectra, and for stacked pages whose legibility is fair or poor."
+  },
+  {
+   "id": "SI-COVERAGE",
+   "description": "Every claimed compound has its evidence spectra.",
+   "computation": "Compound numbers in the characterization section minus compound numbers captioned on 1H pages (with integrals shown) and on 13C pages (with peak picking shown). FAIL listing the missing ones."
+  },
+  {
+   "id": "SI-REVIEW-LOAD",
+   "description": "Human-review workload summary.",
+   "computation": "Count spectra with any human_review rule fired, broken down by rule id, ordered PUR-STRADDLE-95/90, PUR-BELOW-90, HIDE-CAP, UNK-PROMINENT, ISO-*, then the rest, so the reviewer can budget time."
+  }
+ ],
+ "open_questions": [
+  {
+   "question": "Does the 95% purity aim count residual common solvents (EtOAc, hexane, CH2Cl2, ...) as impurities?",
+   "why_it_matters": "In mol%, 0.05 equiv of solvent alone puts a spectrum at the 95% line and 0.1 equiv drops it to about 91% (V- to S), yet the standard calls solvent 'probably the most forgivable'. This rubric counts solvents (literal 'purity of your claimed compound' plus 'Any impurities, including ... solvents ... must be minimized') and flags solvent-only cases with PUR-SOLVENT-ONLY.",
+   "options": [
+    "Count solvents in molar purity (this rubric; literal and strict drafts)",
+    "Base grade on total purity with a softer scale and apply the strict 95/90 lines only to purity_excl_solvents (purity-first draft)",
+    "Count solvents by wt% instead of mol% (needs molecular weights)"
+   ]
+  },
+  {
+   "question": "Is the 95% aim meant in mol% or wt%?",
+   "why_it_matters": "For light solvents and heavy products the two differ several-fold (0.1 equiv EtOAc is about 91 mol% but about 97 wt% for MW 300), which moves the 95/90 lines.",
+   "options": [
+    "mol% from 1H integrals (this rubric)",
+    "wt%, matching how yield is calculated",
+    "Whatever the integrals show visually, judged by a person"
+   ]
+  },
+  {
+   "question": "Which purity bound should set the base grade when unknown proton counts make purity a range?",
+   "why_it_matters": "With the low bound, a 0.1 H-equiv unknown costs up to about 9 points of purity; with the midpoint about 4-5. Near 95% this moves grades by 2-3 notches.",
+   "options": [
+    "Midpoint, with straddle flags sent to human review (this rubric; literal and purity-first)",
+    "Low bound: the author carries the burden of proof (strict draft)",
+    "High bound: benefit of the doubt"
+   ]
+  },
+  {
+   "question": "Which letters correspond to the purity bands?",
+   "why_it_matters": "The text gives bands (>=95 aim, 90-95 tolerable, <90 discuss) but no letters. This rubric uses >=99 E, >=98 E-, >=97 V+, >=96 V, >=95 V-, >=92.5 S+, >=90 S, >=85 S-, else N. The literal draft used only >=95 E / >=90 S / else N, a 6-notch cliff at 95.",
+   "options": [
+    "Graded 1%-per-notch scale above 95, S+/S for 90-95, S-/N below 90 (this rubric)",
+    ">=95 E, 90-95 S, <90 N (literal)",
+    "Softer scale: 95.5 V, 94 V-, 92 S+, 87 S- (purity-first)"
+   ]
+  },
+  {
+   "question": "How much extra should an unidentified impurity cost beyond its effect on purity, and is that double counting?",
+   "why_it_matters": "This rubric deducts 1 notch for any unknowns (>=0.05 H-equiv total) and 1 more for a single unknown >=0.2 H-equiv, on top of the purity reduction, to encode 'unidentified impurities are the worst'. The strict draft instead charged unknowns only through the pessimistic low bound.",
+   "options": [
+    "Type premium up to 2 notches (this rubric)",
+    "Type premium of 1 notch only",
+    "No premium; use the low purity bound instead (strict draft)"
+   ]
+  },
+  {
+   "question": "Should starting material cost a notch beyond its effect on purity?",
+   "why_it_matters": "Without it, starting material and solvent at equal mol% grade the same, although the text singles out solvent and grease as most forgivable. With it (this rubric, -1 at >=0.05 H-equiv), SM sits between unknowns and solvent.",
+   "options": [
+    "-1 notch at >=0.05 H-equiv (this rubric; purity-first)",
+    "Flag only (literal, strict)"
+   ]
+  },
+  {
+   "question": "Where are the grease thresholds, and does a small sample excuse grease?",
+   "why_it_matters": "Grease is outside the purity feature, so it is graded only by these rules: here flag 0.2-1 H-equiv, -1 at >=1 (about 2-4 wt%, yield affected), -1 more at >=3 H-equiv or grease as tall as the product; small sample gives no notch back.",
+   "options": [
+    "Yield-based thresholds 1 / 3 H-equiv, small sample flag only (this rubric)",
+    "Deduct from visible grease (0.2 or 0.5 H-equiv) upward (purity-first, strict)",
+    "Give one notch back for small samples (literal)"
+   ]
+  },
+  {
+   "question": "Does excessive dilution get one notch or two, and does 1H baseline noise count?",
+   "why_it_matters": "The text defines 'excessively dilute' as solvent or water being the highest peak (binary). This rubric adds a second notch at a ratio >=3 and -1 for 1H noise >0.02 of display height, all in one group capped at 2.",
+   "options": [
+    "Two tiers plus noise, max 2 (this rubric)",
+    "One notch only (literal)",
+    "Noise flag only"
+   ]
+  },
+  {
+   "question": "Is a tallest peak above about 3/4, or a clipped peak, a deviation?",
+   "why_it_matters": "Raising the scale so a peak clips shows small impurities better, which serves the anti-hiding purpose. This rubric deducts only a clipped product peak and flags other high or clipped peaks.",
+   "options": [
+    "Deduct only a clipped product peak (this rubric; strict)",
+    "Symmetric 0.60-0.90 tolerance, any class (literal)",
+    "Never deduct high or clipped peaks (purity-first)"
+   ]
+  },
+  {
+   "question": "How hard should the 'not acceptable' low-signal-height rule bite, and on which peak?",
+   "why_it_matters": "From an image the engine cannot prove intent to hide. This rubric caps at S (blocker) when the tallest product peak is below 0.2 of the display height and flags 0.2-0.4. Drafts ranged from cap S- (any peak <0.375) to cap S+.",
+   "options": [
+    "Cap S at product fraction <0.2 (this rubric; purity-first)",
+    "Cap S- at tallest-peak fraction <0.375 (literal)",
+    "Cap S+ plus -1 below 0.35 (strict)"
+   ]
+  },
+  {
+   "question": "Do the display rules (3/4 height, solvent and water not tallest, anti-hiding) apply to 13C?",
+   "why_it_matters": "The text states them in the 1H context; in 13C the CDCl3 triplet is often the tallest peak and quaternary carbons are inherently weak.",
+   "options": [
+    "1H only; 13C low height is flagged (this rubric)",
+    "Apply all display rules to 13C",
+    "Apply only the anti-hiding rule to 13C"
+   ]
+  },
+  {
+   "question": "What does 'signal to noise ratio of at least 1.5' mean for 13C, and should failing it cap or deduct?",
+   "why_it_matters": "1.5 is below the usual detection limit (about 3, height over rms noise). Peak/rms and peak/peak-to-peak differ by about 2.5x. This rubric caps at S (blocker) when raw data show S/N < 1.5; the literal draft deducted 2.",
+   "options": [
+    "Peak height / rms noise, cap S (this rubric)",
+    "Peak height / peak-to-peak noise",
+    "Visual: weakest expected carbon clearly distinguishable from noise",
+    "Deduct 2 instead of capping"
+   ]
+  },
+  {
+   "question": "When inseparable isomers are reported, do the minor isomer's signals count against the 95% purity?",
+   "why_it_matters": "A 10:1 mixture is about 91% of the major isomer. Counting it as impurity puts every reported mixture in the tolerable band. This rubric gives back the unknown-impurity notch when isomers are reported, but the purity itself still counts the minor isomer unless a human recomputes it.",
+   "options": [
+    "Mixture counts as the claimed compound when reported (recompute purity)",
+    "Minor isomer is always an impurity",
+    "Impurity, with one notch back when reported (this rubric)"
+   ]
+  },
+  {
+   "question": "Are substrate (starting-material) spectra in the SI graded more leniently than products?",
+   "why_it_matters": "The standard says 'a slightly impure starting material is not as bad as an impure product', but no feature records the compound's role.",
+   "options": [
+    "Same rubric for all compounds (this rubric)",
+    "Add a ctx flag for substrates and lower each purity band by one step",
+    "That sentence is about troubleshooting reactions, not SI grading"
+   ]
+  },
+  {
+   "question": "Should a 13C grade be tied to the purity of the paired 1H spectrum?",
+   "why_it_matters": "Purity is measured only from 1H, so a clean-looking 13C of an impure compound grades E here while its 1H grades S.",
+   "options": [
+    "Grade 13C independently (this rubric)",
+    "Cap the 13C grade at the paired 1H grade",
+    "Cap at the paired 1H grade plus one notch"
+   ]
+  },
+  {
+   "question": "How much should context (complex, small sample, unstable) relax the grade, and should relaxations stack?",
+   "why_it_matters": "Pages 1-2 explicitly support relief only for a below-90 compound with a stated reason. Complexity appears only as a reason for insets; small scale only as a reason to use pentane against grease.",
+   "options": [
+    "+1 per applicable modifier, stacking, never above a blocker cap (this rubric)",
+    "At most +1 in total",
+    "Flag only; the PI decides"
+   ]
+  },
+  {
+   "question": "In 'no more than 15 to 20% S', does S include S+, and do 13C spectra count?",
+   "why_it_matters": "Changes whether an SI passes the SI-level target.",
+   "options": [
+    "S and S+ across all spectra (this rubric)",
+    "Only plain S",
+    "1H spectra only"
+   ]
+  },
+  {
+   "question": "When the journal is unknown, should missing frequency or solvent cost notches?",
+   "why_it_matters": "The requirement is journal-specific, but the standard tells authors to check the journal first.",
+   "options": [
+    "Flag for review only (this rubric)",
+    "Always deduct 1, since many target journals require it",
+    "Ignore unless the journal is stated"
+   ]
+  },
+  {
+   "question": "Where does a cropped window start to count, and how is a wider window treated?",
+   "why_it_matters": "A cropped window can hide impurities; a wider one cannot. This rubric deducts 1H crops (left <9.5 or right >0 ppm; another notch below 8 or above 0.7) and 13C crops (left <200 or right >0), and deducts a wider-than-recommended window only beyond 1 ppm (1H) or 10 ppm (13C), with human waiver.",
+   "options": [
+    "Directional crop rules plus a wide-window rule (this rubric)",
+    "Deviation-only rules, any direction (literal)",
+    "13C crop only below 190 or above 10 ppm (strict)"
+   ]
+  },
+  {
+   "question": "How many notches can pure labelling faults (structure, number, frequency, solvent, insets, fair legibility) cost in total?",
+   "why_it_matters": "With a cap of 3, a pure sample missing four labels drops from E to V; with a cap of 2 it stays at V+. Missing structure is weighted 1 here (2 in the strict draft).",
+   "options": [
+    "One presentation group capped at 3 (this rubric)",
+    "Capped at 2 (purity-first)",
+    "Separate groups for labels, journal labels and insets (literal, strict)"
+   ]
+  },
+  {
+   "question": "Should calibration offset, baseline drift, linewidth and relaxation delay ever cost notches?",
+   "why_it_matters": "The standard does not mention them. This rubric only flags them; the strict draft deducted for referencing, drift and linewidth.",
+   "options": [
+    "Flag only (this rubric)",
+    "Deduct 1 for clear referencing errors that make reported shifts wrong"
+   ]
+  }
+ ],
+ "design_notes": "MERGED RUBRIC (literal + purity-first + strict-reviewer drafts) for pages 1-2 of the Wang group SI NMR standard. Purity sets the base grade; type-of-impurity premiums, display, integration, window and label rules adjust it; caps enforce the text's hard lines.\n\n1) BASE GRADE (1H). purity_basis = mid of purity_mol_pct (unknowns, starting material and common solvents counted; water, residual NMR solvent and grease excluded, per the feature definition). Table: >=99 E, >=98 E-, >=97 V+, >=96 V, >=95 V-, >=92.5 S+, >=90 S, >=85 S-, else N. The text's lines are kept exactly: 95% (the aim) is the lowest V grade, 90-95% is the S+/S 'tolerable' band, below 90% is S-/N ('discuss whether to report it'). Above 95% the scale is 1% per notch because 'any impurities ... must be minimized' and the reference SI separates E from E-/V+. When a purity range straddles 95 or 90, PUR-STRADDLE-95/90 send it to human review rather than silently deciding.\n\n2) CAPS (hard lines; blocker caps cannot be lifted by context): PUR-NOT-ESTIMABLE (1H purity unreadable or null) cap S; PUR-BELOW-90 (high bound <90) cap S-, so the stated-reason modifier can lift N to S- but never into the tolerable band; HIDE-CAP (tallest product peak <0.2 of display height, 'not acceptable') cap S; LEG-POOR cap S; C13-SNR (raw S/N <1.5, 'need to') cap S.\n\n3) IMPURITY RANKING ('unidentified impurities are the worst'; 'Solvent and grease are probably the most forgivable'). The purity base charges the AMOUNT; type premiums charge the KIND, so they are not a second charge for the same thing: unknowns -1 at >=0.05 H-equiv total, -1 more for a single unknown >=0.2 H-equiv (review for rotamer/isomer/satellite), max 2; starting material -1 at >=0.05 H-equiv, max 1; common solvent 0 (flag at >=0.1 equiv for a yield check; PUR-SOLVENT-ONLY flags spectra below 95% only because of solvent). Grease is outside purity and graded by yield accuracy: flag 0.2-1 H-equiv, -1 at >=1 (about 2-4 wt% at MW 300), -1 more at >=3 or when grease is as tall as the product, max 2. At equal molar level the order is unknown > starting material > solvent, as the text ranks them.\n\n4) DOUBLE-COUNTING CONTROLS. Dilution (solvent/water tallest; ratio >=3) and 1H noise share group 'dilution' (max 2) because they share a cause. DISP-LOW and a clipped product peak share 'display_height' (max 1). The 0.2-0.4 product-height band is a review flag, not a second deduction, so only DISP-LOW/dilution and, below 0.2, the HIDE-CAP apply. The wide-window rule fires only when the window is not cropped, so a cropped window is charged once by the crop rules. The 13C interference rule is a single rule. CM-COMPLEX excludes unknowns when an isomer is suspected so it and CM-ISOMERS-REPORTED never return the same notch. Unknown signals reduce purity and carry a type premium; this is deliberate and documented (see open questions).\n\n5) PRESENTATION. Structure, number, journal-required frequency and solvent, complex-without-insets and fair legibility share one group capped at 3. Missing 1H integrals -2 and missing 13C peak picking -1 (group data_display). Integration quality (integral over solvent/water, >=2 and >=4 non-integer integrals) max 2, all with review. Windows: 1H crop (left <9.5 or right >0) -1, severe crop (left <8 or right >0.7) -1 more; 13C crop (left <200 or right >0) -1; a window wider than recommended by >1 ppm (1H) or >10 ppm (13C) -1 with human waiver; small deviations flag. When the journal is unknown, missing frequency/solvent is a review flag.\n\n6) LANGUAGE TO EFFECT. 'not acceptable' and 'need to' -> blocker caps; 'must' -> major deductions (isomers not reported -2) or major review flags when not measurable; 'should' -> 1-2 notch deductions; 'In general' / 'I recommend' -> flags for small deviations, -1 for gross ones. Items the text never mentions (calibration, baseline drift, linewidth, relaxation delay) are flags only and never change the grade.\n\n7) 13C. No purity features, so default_base_grade_if_purity_unknown = E applies; 13C grades come from peak picking, window, S/N (raw cap or image-noise proxy), interference, labels and legibility. Display-height rules are 1H-only (13C low display is a review flag). PUR-NOT-ESTIMABLE is restricted to 1H, so a 13C page is never capped for missing purity.\n\n8) CONTEXT MODIFIERS (only when the author supplies ctx_*; +1 each, never above a blocker cap): stated reason below 90% (text-backed; bounded at S- by PUR-BELOW-90); small sample with dilution or noise (inferred); complex compound with non-integer integrals or small unknowns (inferred, weak basis); reported isomers when the unknown notch fired. Flags only: unstable compound, small sample with grease, unstable without a stated reason, journal not requiring labels. Context features appear in rules only to switch on context-dependent requirements (journal labels, insets, isomer reporting).\n\n9) THRESHOLDS. All numeric thresholds not in the text (0.05/0.2 H-equiv unknowns, 0.05 SM, 1/3 H-equiv grease, 1/3 dilution ratios, 0.01/0.02 1H noise, 0.6/0.9 height band, 0.2/0.4 product height, window crop limits 9.5/0/8/0.7 ppm and 200/0 ppm, 0.02/0.05 13C noise, 0.03/0.3 ppm calibration) are first-pass choices taken from or between the drafts, not fitted to any graded example. They should be tuned only in the blind comparison with the PI's grades.\n\n10) VALIDATION. build_merged.py writes rubric_merged.json; validate_merged.py checks every feature name, operator, placeholder, group cap and that each standard_quote occurs verbatim in the standard (whitespace-normalised), and runs a reference implementation of the engine on synthetic feature sets for arithmetic sanity only (no real spectra): ideal 1H -> E; ideal 13C -> E; 0.03 equiv EtOAc only -> V+; unreadable 1H -> S; 1H with product peak at 0.15 height -> S; 88% with stated reason -> S-. Folder: C:\\Users\\86156\\AppData\\Local\\Temp\\claude\\D--DRQ-Claude-code-file-Peng-lab-SOP\\16200d7d-3516-466e-be0f-f356338e6921\\scratchpad\\merged_rubric_work.\n\nEngine assumptions: modifiers apply after deductions and caps; a rule's nucleus field restricts it to that nucleus; '!=' with a list value compares whole lists (used once, to skip an empty impurity_labels_on_page).",
+ "disagreements": [
+  {
+   "topic": "Purity bound for the base grade",
+   "positions": "literal: mid; purity-first: mid; strict: low (burden of proof on the author).",
+   "chosen": "mid, with PUR-STRADDLE-95/90 flags to human review",
+   "why": "The midpoint is the unbiased estimate when unknown proton counts are unknown; the 'unknowns are worst' ranking is charged explicitly by UNK rules instead of through a pessimistic bound, which keeps the amount and type charges separate and visible."
+  },
+  {
+   "topic": "Base grade table",
+   "positions": "literal: >=95 E, >=90 S, else N; purity-first: 99 E, 98 E-, 97 V+, 95.5 V, 94 V-, 92 S+, 90 S, 87 S-; strict (low bound): 98 E, 97 E-, 96 V+, 95 V, 92.5 S+, 90 S, 85 S-.",
+   "chosen": ">=99 E, >=98 E-, >=97 V+, >=96 V, >=95 V-, >=92.5 S+, >=90 S, >=85 S-, else N (mid basis)",
+   "why": "Keeps the text's own lines exactly (95 = lowest V grade, 90-95 = S+/S 'tolerable' band, <90 = S-/N 'discuss') while grading within >=95% because 'any impurities ... must be minimized' and the reference SI distinguishes E from E-/V+. 1% per notch above 95 compensates for using mid rather than low. Avoids the literal draft's 6-notch cliff."
+  },
+  {
+   "topic": "Common solvents in purity",
+   "positions": "literal and strict: count them, flag solvent-only shortfalls; purity-first: count them on a softer scale, apply strict 95/90 caps only to non-solvent purity.",
+   "chosen": "Count them in total mol% purity; PUR-SOLVENT-ONLY flag; no extra solvent notch; SOL-YIELD-CHECK flag at >=0.1 equiv",
+   "why": "The text says purity 'of your claimed compound' and lists solvents among impurities that 'must be minimized'; 'most forgivable' is honoured by giving solvent no type premium. Raised as the first open question because it moves many grades."
+  },
+  {
+   "topic": "Unidentified-impurity premium",
+   "positions": "literal: -1 at >=0.05 total, -1 at single >=0.2; purity-first: -1 at single >=0.02 or total >=0.05, -1 at single >=0.05 or total >=0.15; strict: no premium (low bound).",
+   "chosen": "-1 at total >=0.05 H-equiv; -1 more at single >=0.2 H-equiv (human review); group max 2",
+   "why": "Text ranks unknowns worst, so a type premium is needed under a mid basis. The purity base already charges the amount, so the second notch is reserved for a clearly prominent signal (literal threshold) and sent to review for rotamers/isomers/satellites; purity-first's 0.02-0.05 triggers sit near the measurement floor."
+  },
+  {
+   "topic": "Starting material premium",
+   "positions": "literal: flag; purity-first: -1 at >=0.05 H-equiv; strict: flag.",
+   "chosen": "-1 at >=0.05 H-equiv (group max 1)",
+   "why": "The text names solvent and grease as 'most forgivable', implying identified starting material is less forgivable than solvent; without a premium SM and solvent grade identically. One notch keeps it below the unknown premium."
+  },
+  {
+   "topic": "Grease thresholds and small-sample relief",
+   "positions": "literal: flag <1, -1 at >=1, -1 at >=3, -1 if grease tallest/ratio>=1, small sample +1; purity-first: -1 at >=0.2, -1 at >=1, -1 if tallest, small sample flag; strict: -1 at >=0.5 or ratio>=0.25, -2 at >=2 or ratio>=0.75 or tallest, max 3, small sample flag.",
+   "chosen": "flag 0.2-1; -1 at >=1 H-equiv (ratio >=0.5 fallback when H-equiv unknown); -1 more at >=3, ratio >=1 or grease tallest; max 2; small sample flag only",
+   "why": "The text ties grease tolerance to yield accuracy ('there should not be so much that the yield calculation is no longer accurate'); about 1 H-equiv is about 2-4 wt% for MW 300. The text gives explicit small-scale remedies, so small scale explains but does not excuse grease."
+  },
+  {
+   "topic": "13C interference",
+   "positions": "literal: -1 if grease/silicone/common solvent tallest or grease ratio >=1; purity-first: -1 if common solvent tallest, -1 if grease tallest (any nucleus); strict: -1 if grease ratio >=0.5 or any non-product tallest.",
+   "chosen": "One 13C rule: -1 if tallest is grease, silicone grease, common solvent, unknown or starting material, or grease ratio >=1; review",
+   "why": "Single rule avoids double charging; residual NMR solvent (CDCl3 triplet) is excluded because it is normally tallest in 13C."
+  },
+  {
+   "topic": "Dilution tiers and 1H noise",
+   "positions": "literal: -1 only; purity-first: -1 and -1 at ratio >3, noise flag >0.01, cap V- at noise >0.02; strict: -1 and -1 at ratio >=3, -1 for noise >0.01.",
+   "chosen": "-1 solvent/water tallest; -1 more at ratio >=3; -1 for 1H noise >0.02 (flag 0.01-0.02); all in group 'dilution' capped at 2",
+   "why": "Noise and dilution usually share a cause (too little sample), so they share one group to avoid double charging; the second tier reflects 'excessively'. Noise uses a deduction rather than purity-first's cap because the standard does not mention noise directly."
+  },
+  {
+   "topic": "High or clipped tallest peak",
+   "positions": "literal: -1 if >0.9 or clipped (any class); purity-first: flag if clipped; strict: -1 only if a product peak is clipped.",
+   "chosen": "-1 only for a clipped product peak; flag other peaks above 0.9",
+   "why": "The 3/4 sentence is symmetric, but the stated purpose (not hiding impurities) is served by a raised scale; a clipped CHCl3/water peak is already charged by the dilution rule."
+  },
+  {
+   "topic": "Anti-hiding rule",
+   "positions": "literal: cap S- (blocker) when tallest-peak fraction <0.375; purity-first: cap V- at product <0.4, cap S (blocker) at product <0.2; strict: -1 at product <0.35, cap S+ (blocker) at product <0.2.",
+   "chosen": "Flag with review at product fraction 0.2-0.4; cap S (blocker) below 0.2",
+   "why": "The product peak, not the tallest peak, decides whether impurities relative to the product are visible (two of three drafts). An image cannot prove intent, so the cap is the middle level (S) and the middle band is a review flag rather than a second charge on top of DISP-LOW/dilution."
+  },
+  {
+   "topic": "Missing 1H integrals",
+   "positions": "literal: -1; purity-first: -2; strict: -2.",
+   "chosen": "-2 (group data_display)",
+   "why": "Integrals are the reader's only evidence for proton counts and purity ('should provide evidence for identity and purity')."
+  },
+  {
+   "topic": "Integration quality",
+   "positions": "literal: flags only; purity-first: -1 integral over solvent, -1 at >=2 non-integer (max 1); strict: -1 over solvent, -1 at >=2, -1 at >=4 (max 2).",
+   "chosen": "-1 integral over solvent/water; -1 at >=2 non-integer; -1 more at >=4; group max 2; all with review",
+   "why": "Integrals that misstate proton counts weaken the identity/purity evidence the standard asks for; review because isomers, overlap or baseline can explain them."
+  },
+  {
+   "topic": "Window rules",
+   "positions": "literal: deviation-only (flag >0.25, -1 >1; 13C flag >2.5, -1 >10); purity-first: deviation -1 plus crop -1 (1H <9.5/>0) and cap V- for severe crop (<8/>0.7), 13C crop <200/>0; strict: crop -1 (1H <9.5/>0.5; 13C <190/>10) plus deviation -1 (1H >1; 13C >20).",
+   "chosen": "Directional: 1H crop -1 (left <9.5 or right >0), severe crop -1 more (left <8 or right >0.7); wide window -1 only when not cropped and deviation >1 (1H) or >10 (13C); 13C crop -1 (left <200 or right >0); flags for small deviations; group max 2",
+   "why": "Cropping can hide signals, widening cannot, and the deviation feature cannot tell them apart; making the wide rule conditional on no crop removes the double charge present in purity-first and strict."
+  },
+  {
+   "topic": "Presentation weights and grouping",
+   "positions": "literal: structure -1, number -1, journal labels separate (max 2), insets separate, presentation max 3; purity-first: all presentation in one group max 2; strict: structure -2, labeling max 3.",
+   "chosen": "Structure -1, number -1, required frequency -1, required solvent -1, complex without insets -1, fair legibility -1, one group capped at 3",
+   "why": "Structure and number share one 'should ... displayed clearly' sentence, so equal weight; one group with cap 3 lets a page that lacks everything required fall out of E/V+ without letting labels outweigh purity."
+  },
+  {
+   "topic": "Legibility",
+   "positions": "literal: poor -1, fair flag; purity-first and strict: poor cap S (blocker), fair -1.",
+   "chosen": "poor: cap S (blocker); fair: -1",
+   "why": "An unreadable page cannot serve as evidence of identity or purity."
+  },
+  {
+   "topic": "13C S/N below 1.5",
+   "positions": "literal: -2; purity-first and strict: cap S (blocker). Image proxy: literal flag >0.02; purity-first flag >0.02 and -1 >0.05; strict flag 0.02-0.05, -1 >0.05.",
+   "chosen": "Raw S/N <1.5: cap S (blocker); image noise >0.05: -1 with review; 0.02-0.05: flag",
+   "why": "'need to be collected' is a hard requirement; the proxy deduction is mild because it is not a measured S/N."
+  },
+  {
+   "topic": "Below-90 purity and the stated-reason modifier",
+   "positions": "literal: base N, reason +1 to S-; purity-first: S- 87-90, cap N on non-solvent <90, reason +1; strict: S- 85-90, reason +1 (could reach S).",
+   "chosen": "Base S- (85-90) or N (<85); PUR-BELOW-90 blocker cap S- when the high bound is below 90; reason modifier +1 cannot pass S-",
+   "why": "A compound below 90% is reportable only as an exception, which should never reach the 'tolerable' 90-95% band's S grades; the blocker cap enforces that ceiling against all modifiers."
+  },
+  {
+   "topic": "Unstable-compound modifier",
+   "positions": "literal: flag; purity-first: +1; strict: flag.",
+   "chosen": "Flag only",
+   "why": "The text allows instability only as a reason within the below-90 exception, which is handled by the stated-reason modifier."
+  },
+  {
+   "topic": "Complexity and isomer modifiers",
+   "positions": "literal: complex + small unknowns +1, non-integer flag, isomers reported flag; purity-first: complex non-integer +1, isomers reported +1; strict: one complex +1 for non-integer or unknowns, isomers reported +1.",
+   "chosen": "One CM-COMPLEX +1 (non-integer integrals, or small unknowns when no isomer is suspected); CM-ISOMERS-REPORTED +1 when the unknown notch fired",
+   "why": "Combining the complexity cases into one modifier and excluding isomer cases avoids returning the same notch twice."
+  },
+  {
+   "topic": "Calibration, baseline drift, linewidth",
+   "positions": "literal and purity-first: flags; strict: -1 each for referencing, drift, linewidth.",
+   "chosen": "Flags only",
+   "why": "The standard does not address them; flags keep them visible without changing grades."
+  }
+ ],
+ "_variant": "Relaxed variant for testing, NOT approved by the group leader. Same as rubric.json except five open decisions taken the lenient way: (1) no charge for structure, compound number or page sharpness (screenshots cannot show them); (2) purity from the high bound (unknown signals counted as 3H); (3) residual common solvents not counted against purity; (4) no extra notch for unknown impurities or starting material beyond their effect on purity; (5) integral accuracy is not charged. On the 13 guideline examples this matched the group leader exactly on 3 and within one notch on 5.",
+ "purity_excludes_common_solvents": true
+}

@@ -1,0 +1,68 @@
+{
+ "axis_labels": [
+  12,
+  11.5,
+  11,
+  10.5,
+  10,
+  9.5,
+  9,
+  8.5,
+  8,
+  7.5,
+  7,
+  6.5,
+  6,
+  5.5,
+  5,
+  4.5,
+  4,
+  3.5,
+  3,
+  2.5,
+  2,
+  1.5,
+  1,
+  0.5,
+  0,
+  -0.5,
+  -1,
+  -1.5
+ ],
+ "title_lines": [],
+ "compound_number": "",
+ "frequency_text": "",
+ "solvent_text": "",
+ "structure_drawn": true,
+ "structure_location": "top-center",
+ "integral_values": [
+  2.11,
+  1.17,
+  2.17,
+  2.25,
+  6.79,
+  1.13,
+  2.06,
+  1.99,
+  1.06,
+  1
+ ],
+ "integral_style": "brackets below baseline",
+ "peak_labels_printed": true,
+ "annotations": [
+  {
+   "text": "S.M",
+   "approx_ppm": 4.51
+  },
+  {
+   "text": "S.M",
+   "approx_ppm": 2.91
+  }
+ ],
+ "insets": [],
+ "vertical_intensity_axis": false,
+ "image_kind": "software screenshot",
+ "legibility": "fair",
+ "trace_color": "dark red / maroon",
+ "notes": "Axis end labels are clipped at the image edges. The leftmost label shows only \"2.0\" (its leading \"1\" is cut off) and the rightmost shows only \"-1\". I recorded them as 12.0 and -1.5 because there are 28 evenly spaced major ticks, x=36 to 1108 px, about 79.4 px/ppm. Below the axis it says \"f1 (ppm)\". No title, notebook code, compound number, frequency or solvent is printed. The structure is drawn in the upper middle of the plot. It shows BzO-CH2 on a stereocentre carrying a phenylalkynyl group (PhC≡C-), next to a second stereocentre bearing a 4-chlorophenyl and a vinyl group, with wedge/hash bonds. The integrals are green brackets under the baseline, with blue values rotated 90 degrees. Approximate bracket centres: 2.11 at ~8.07, then 1.17/2.17/2.25/6.79 crowded over ~7.6-7.3, 1.13 at ~6.30, 2.06 at ~5.24, 1.99 at ~4.40, 1.06 at ~3.68 and 1.00 at ~3.43 ppm. Peak labels are printed in blue along the top, left to right: 8.10, 8.08, 8.07, 8.06, 8.05, 8.04; 7.46, 7.36, 7.30, 7.30, 7.29, 7.28; 6.35, 6.32, 6.32, 6.30, 6.30, 6.28, 6.28, 6.26; 5.29, 5.26, 5.22, 5.18; 4.42, 4.41, 4.40, 4.39; 3.69, 3.68, 3.67, 3.66; 3.45, 3.43, 3.41, 3.40. The \"7.28\" and \"6.35\" labels overlap. One boxed \"S.M\" label has two arrows. One points to the peak at ~4.51 ppm, just left of the 4.40 multiplet, and the other to the peak at ~2.91 ppm. Neither of these peaks has a printed peak label or integral. There are also unlabelled, unintegrated peaks at ~2.2, ~1.56, ~1.26, ~0.88 and ~0.07 ppm. There are no insets and no vertical intensity axis."
+}

@@ -1,0 +1,64 @@
+{
+ "axis_labels": [
+  10.5,
+  10,
+  9.5,
+  9,
+  8.5,
+  8,
+  7.5,
+  7,
+  6.5,
+  6,
+  5.5,
+  5,
+  4.5,
+  4,
+  3.5,
+  3,
+  2.5,
+  2,
+  1.5,
+  1,
+  0.5,
+  0,
+  -0.5
+ ],
+ "title_lines": [],
+ "compound_number": "",
+ "frequency_text": "",
+ "solvent_text": "",
+ "structure_drawn": true,
+ "structure_location": "middle-left",
+ "integral_values": [
+  1,
+  0.82,
+  0.81,
+  1.93,
+  0.91,
+  1.5,
+  1.5,
+  0.96,
+  0.87,
+  0.97,
+  0.9
+ ],
+ "integral_style": "brackets below baseline",
+ "peak_labels_printed": true,
+ "annotations": [],
+ "insets": [
+  {
+   "ppm_left": 14.1,
+   "ppm_right": 13.55,
+   "location": "top-right",
+   "integral_values": [
+    0.8
+   ]
+  }
+ ],
+ "vertical_intensity_axis": true,
+ "image_kind": "software screenshot",
+ "legibility": "good",
+ "trace_color": "black",
+ "notes": "The page has no title, compound number, frequency or solvent text. The main-spectrum peak labels at the top, left to right, are: 8.10, 8.00, 7.95, 7.69, 7.68, 7.57, 7.56, 7.55, 7.48, 7.47, 7.35, 7.33, 7.32, 7.29, 7.28, 7.27, 7.20, 7.19, 6.86, 6.85, 6.84, 6.71, 6.69. One more peak label, 5.31, sits on the very tall peak, which runs off the top of the plot. The main vertical intensity axis on the right runs from -200 to 2200. The inset is at the top right and shows a single peak labelled 13.84. Its x-axis labels are 14.1, 14.0, 13.9, 13.8, 13.7 and 13.6, and its trace runs on to about 13.55. The inset has its own vertical axis (0, 500, 1000), and its integral of 0.80 is drawn as a bracket below its baseline. No integrals are drawn for the peaks at about 1.5, 1.25, 0.85 or 0.07 ppm, or for the 5.31 peak, and none of these peaks has a text annotation. The structure is a binaphthyl bis(guanidine-type carbene) gold(I) chloride complex with pyridyl and Ph groups; no compound number is printed."
+}

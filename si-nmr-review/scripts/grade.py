@@ -82,7 +82,18 @@ def fill(template, f):
     return re.sub(r"\{([A-Za-z0-9_]+)(?::([^}]*))?\}", rep, template)
 
 
+def solvent_free(features, rubric):
+    """With purity_excludes_common_solvents, every rule and the base grade see purity without solvents."""
+    if not rubric.get("purity_excludes_common_solvents"):
+        return features
+    f = dict(features)
+    f["purity_mol_pct_low"] = f.get("purity_excl_solvents_mol_pct_low")
+    f["purity_mol_pct_high"] = f.get("purity_excl_solvents_mol_pct_high")
+    return f
+
+
 def grade(features, rubric, purity_override=None):
+    features = solvent_free(features, rubric)
     known = set(features)
     errors = set()
     nuc = features.get("nucleus", "1H")
@@ -169,6 +180,7 @@ def grade(features, rubric, purity_override=None):
 def grade_with_range(features, rubric):
     """Grade at the rubric's purity basis, plus the grades the low and high purity bounds would give."""
     main = grade(features, rubric)
+    features = solvent_free(features, rubric)
     lo, hi = features.get("purity_mol_pct_low"), features.get("purity_mol_pct_high")
     if lo is not None and hi is not None and features.get("purity_estimable", True):
         g_lo = grade(features, rubric, purity_override=lo)["grade"]

@@ -1,13 +1,13 @@
 __pycache__/
 *.pyc
-# outputs and any spectra: never commit unpublished data
+dist/
 out/
 output/
+# never commit unpublished spectra; only the published examples under examples/ are tracked
 *.png
 *.jpg
 *.jpeg
 *.pdf
-# group-specific rules stay private unless the group agrees
-si-nmr-review/config/rubric.json
+!examples/images/*.png
+!examples/images/*.jpeg
 si-nmr-review/config/rubric_drafts/
-example_test/

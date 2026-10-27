@@ -1,40 +1,61 @@
 ---
 name: si-nmr-review
-description: Pre-screen the 1H NMR spectra of a Supporting Information file against a research group's written spectral standard and suggest an E/V/S/N grade with reasons. Use when someone asks to check, grade or pre-review SI spectra or spectrum images before group peer review. It produces suggestions for a human reviewer, never final grades.
+description: Pre-screen 1H NMR spectra from an organic-chemistry Supporting Information file against the Wang group spectral guidelines (2026-10-25) and suggest an E/V/S/N grade with reasons for each spectrum. Use when someone uploads SI spectrum images, a ZIP of them, or an SI PDF and asks to check, grade or pre-review the spectra. It produces suggestions for a human reviewer, never final grades.
 ---
 
 # SI NMR pre-screen
 
-The grade comes from fixed code and a fixed rubric, so the same spectrum always gets the same grade and the same reasons. The model only does one thing: copy printed text off each page into a fixed form.
+The grade comes from fixed code and a fixed rule file, so the same spectrum always gets the same grade and the same reasons. Your only judgement-free job is to copy printed text off each page into a fixed form; the scripts do every measurement and apply every rule. Do not grade spectra yourself and do not change a grade the scripts give.
 
-## Inputs
-- One image per spectrum page (PNG or JPEG), cropped to the spectrum. A PDF page can be rendered to an image first.
-- Optional context per spectrum, from the author's compound list (`ctx_high_complexity`, `ctx_small_sample`, `ctx_unstable`, `ctx_isomers_reported`, `ctx_low_purity_reason_stated`, `ctx_journal`, `ctx_journal_requires_freq_solvent`). Without context the grade is the strict one.
+`SKILL_DIR` below means the folder that contains this SKILL.md.
 
-## Steps
-1. **Transcribe each image** into `schemas/transcription.schema.json`. Copy only what is printed: axis labels left to right, integral values from highest ppm, compound number, frequency, solvent, structure present, annotations such as "EtOAc" or "S.M", insets. Do not judge anything. Have two independent transcriptions made; where they disagree on the axis labels, the integral values or the printed text, look again and settle it. Save as `<image name>.json`.
-2. **Run the pipeline**:
-   ```
-   python scripts/review_images.py <images_dir> <transcriptions_dir> <out_dir> [--context <context_dir>]
-   ```
-   For every image it writes `_features.json` (what was measured), `_grade.json` (rules that fired), and `_overlay.png` (what the code took as baseline, integrals and impurity signals). For the whole set it writes `report.md` and `summary.csv`.
-3. **Check the overlays** before trusting a grade. If a structure, inset or label was read as part of the spectrum, or an integral bracket was missed, the features for that spectrum are wrong. Report it; do not patch the numbers by hand.
-4. **Hand the report to the human reviewers.** Lead with the items under "Needs a person" and with spectra whose low- and high-purity grades differ.
+## 1. Set up
+- Inputs: on claude.ai the user's uploads are usually in `/mnt/user-data/uploads`; otherwise use the files the user names. Work in a scratch folder, e.g. `WORK=/tmp/si-nmr`.
+- Outputs: write to `/mnt/user-data/outputs/si-nmr-review` if `/mnt/user-data/outputs` exists, else to `$WORK/out`.
+- Check the libraries: `python -c "import numpy, scipy, PIL"`. If one is missing, `pip install numpy scipy pillow` (add `--break-system-packages` if pip asks for it). For PDFs, `pypdf` and `pypdfium2` (or `pymupdf`) are also needed.
+
+## 2. Collect the spectra
+```
+python SKILL_DIR/scripts/prepare_inputs.py <uploads> --out $WORK/images
+```
+It takes images, ZIPs of images and PDFs (embedded screenshots are extracted; vector pages are rendered). Each image must hold one spectrum. If a rendered page holds two, crop it into two images with PIL before going on. Tell the user how many spectra were found.
+
+## 3. Transcribe each image (the only step that is yours)
+For every image `NAME.png`, write `$WORK/transcriptions/NAME.json` following `SKILL_DIR/schemas/transcription.schema.json`. Copy only what is printed; do not judge anything.
+- `axis_labels`: every number printed under the main x-axis, left to right, exactly as printed. Leave out labels cut off by the image edge.
+- `integral_values`: every integral value under the main spectrum, from highest ppm (left) to lowest. Integrals of an inset go in that inset's entry.
+- `compound_number`, `frequency_text`, `solvent_text`: as printed, or "" if not printed. Do not infer them.
+- `annotations`: labels such as "EtOAc", "S.M", "H2O" with the ppm they point to.
+- `legibility`: good, fair (readable with effort) or poor (labels unreadable, e.g. a blurred scan).
+Small text is easier to read on enlarged crops: `python SKILL_DIR/scripts/zoom.py $WORK/images/NAME.png $WORK/zoom` writes enlarged header, axis and integral strips (with the rotated integral values turned upright).
+Then check yourself once: re-read the axis labels and integral values of every image from the enlarged crops and correct any value that differs. The integral count must equal the number of integral brackets drawn.
+
+## 4. Run the pipeline
+```
+python SKILL_DIR/scripts/review_images.py $WORK/images $WORK/transcriptions <outputs> [--context <context_dir>]
+```
+Optional context (author facts, one `NAME.json` per spectrum): `ctx_high_complexity`, `ctx_small_sample`, `ctx_unstable`, `ctx_isomers_reported`, `ctx_low_purity_reason_stated` (true/false), `ctx_journal`. Ask the user for these only if they offer them; without context the grade is the strict one.
+
+It writes `report.md` (summary table, whole-SI check, per-spectrum reasons and items that need a person), `summary.csv`, and for each spectrum `NAME_overlay.png` (what the code took as baseline, integrals and impurity signals), `NAME_features.json` and `NAME_grade.json`.
+
+## 5. Report back
+- Show the summary table from `report.md` and the whole-SI distribution.
+- For each spectrum give the grade, the purity range and the main reasons as the report states them, and list the "Needs a person" items.
+- Look at each overlay. If a structure, an inset or a label was taken as part of the spectrum, or an integral bracket is clearly missed, say that this spectrum's numbers are unreliable. Never patch numbers by hand.
+- Offer the files in the output folder.
+- Close with: these are suggestions from fixed rules; the final grade is the reviewer's.
 
 ## What is fixed where
-- `scripts/nmrimage.py`: pixel to ppm calibration from the tick marks, trace extraction, integral brackets.
-- `scripts/features.py`: signal finding, solvent/water/grease/13C-satellite assignment from `config/solvent_shifts.json`, purity bounds, display fractions.
-- `config/rubric.json`: thresholds and rules, written from your group's standard (not included in this repository; `config/rubric.example.json` shows the format). Change it only with the group leader's agreement, and keep the old version.
+- `scripts/nmrimage.py`: ppm calibration from the tick marks, trace extraction, integral brackets.
+- `scripts/features.py`: signal finding; residual solvent, water, grease, common solvents (`config/solvent_shifts.json`) and 13C satellites; purity bounds; display fractions.
+- `config/rubric.json`: thresholds and rules, written from the Wang group guidelines by agents that never saw the example grades. Change it only with the group leader's agreement, and keep the old version.
 - `scripts/grade.py`: the fixed algorithm that applies the rubric.
 
 ## Limits
-- Images are low resolution (about 0.01 ppm and 1-2% of display height per pixel). Shimming, linewidth and 13C signal-to-noise cannot be measured from them; those need the raw Bruker data.
-- Purity is a range. The low bound counts each unknown signal as a separate 1-proton species; the high bound as 3 protons. Integrals are assumed to count protons per molecule, which halves impurity mol% for C2-symmetric compounds integrated per half.
-- A line within 0.04 ppm of a known solvent shift is assigned to that solvent, so a product line at the same place can be mistaken for it. Grease and hexanes are not told apart.
-- Scanned or blurred pages may fail calibration; then only the page facts are graded and the report says so.
-- The solvent shift table was entered from memory of Gottlieb 1997 and Fulmer 2010; check it against the papers.
-- When the integral brackets cannot be read, the regions are inferred from the value labels; a small line right next to a product multiplet can then be absorbed into the product.
-- Small impurity areas are measured above a local baseline and can be slightly underestimated.
-- Spectra drawn in blue or green are not supported (those colours are removed as labels and integrals).
-- An axis whose label count does not match the transcription, or has an extra word at one end, is refused rather than guessed; the spectrum is then graded on page facts only.
-- So far tested privately on 13 raster 1H examples only.
+- Images are low resolution (about 0.01 ppm and 0.1-0.2% of display height per pixel). Shimming, linewidth and 13C signal-to-noise cannot be measured from them; those need the raw data.
+- Purity is a range. The low bound counts each unknown signal as a separate 1-proton species, the high bound as 3 protons. Small impurity areas can be slightly underestimated.
+- A line within 0.04 ppm of a known solvent shift is called that solvent, so a product line at the same place can be mistaken for it. Grease and hexanes are not told apart.
+- When integral brackets cannot be read, regions are inferred from the value labels; a small line right next to a product multiplet can then be absorbed into the product.
+- Spectra drawn in blue or green are not supported. Scanned or blurred pages, or axes whose labels do not match the transcription, are refused rather than guessed; such a spectrum is graded on page facts only.
+- The solvent shift table was entered from memory of Gottlieb 1997 and Fulmer 2010 and must be checked against the papers.
+- Tested on 13 raster 1H examples. The rubric as written is about 2.8 notches harsher than the group leader's own grades on those examples; treat grades as a screen, not a verdict.
