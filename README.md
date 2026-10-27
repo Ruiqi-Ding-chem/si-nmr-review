@@ -62,6 +62,8 @@ spectrum image ──► 1. transcription (model) ──► 2. digitize ──�
 
 Against the group leader's own grades: the strict rubric is about 2.8 notches harsher on average (4 of 13 within one notch); the relaxed rubric matches 3 exactly and 5 within one notch. Both agree with him on the clearly failing spectra. The remaining differences come from context he applies (complex products, very small samples) and from what a screenshot cannot show (shimming, whether a mixture is reported in the text).
 
+A second test (three blind runs per condition) compared Claude without code: given only the guidelines text, it was within one notch of the group leader on 10 of 13 (mean −0.3), but its results depend on the prompt and vary between runs (4-7 of 13 identical between pairs of runs). Given `REVIEW_GUIDE.md` as well, it reproduced the scripts' strict grades on 8-9 of 13 and agreed between runs on 10 of 13. It was also about 2.8 notches harsher than the group leader, like the strict rubric. The gap comes from the rules, not from how spectra are measured; recalibrating the rubric and regenerating the guide is the next step.
+
 ## Limits
 
 See the Limits section of `si-nmr-review/SKILL.md`. In short: raster images limit precision; shimming and 13C signal-to-noise need raw data; purity is a range; the solvent shift table must be checked against Fulmer et al., Organometallics 2010, 29, 2176.
