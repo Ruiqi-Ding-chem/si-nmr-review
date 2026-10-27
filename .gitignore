@@ -11,3 +11,4 @@ output/
 !examples/images/*.png
 !examples/images/*.jpeg
 si-nmr-review/config/rubric_drafts/
+demo_output/

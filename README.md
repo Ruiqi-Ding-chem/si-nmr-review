@@ -4,25 +4,37 @@ A Claude skill that pre-screens the 1H NMR spectra of an organic-chemistry Suppo
 
 Status: prototype (v0.1), tested on the 13 published example spectra in `examples/`.
 
-## Use it on claude.ai (no installation)
+## Three ways to use it
+
+| | Where | What runs | Repeatable |
+|---|---|---|---|
+| 1 | claude.ai without code execution (for example a university account where it is switched off) | Claude follows the written rules in `REVIEW_GUIDE.md` by looking at the spectra | no |
+| 2 | claude.ai with code execution | the skill: scripts measure and grade | yes |
+| 3 | your computer: Claude Code, or plain Python | the same skill and scripts | yes |
+
+### 1. claude.ai, no code: the review guide
+
+1. Create a Project and add [REVIEW_GUIDE.md](REVIEW_GUIDE.md) to its files. Optionally paste into the Project instructions: *Review NMR spectra by following REVIEW_GUIDE.md.*
+2. In a chat in that Project, upload the spectra (images or the SI PDF) and ask: *Review these 1H spectra following the guide.*
+
+On an account that allows skills, the same text is also a skill without scripts: `si-nmr-review-guide.zip` in the release.
+
+### 2. claude.ai with code execution: the skill
 
 1. Download **[si-nmr-review.zip](https://github.com/1e32e3e/si-nmr-review/releases/latest/download/si-nmr-review.zip)** from the latest release. Use this file, not GitHub's "Download ZIP" button (that adds an extra folder level, and claude.ai refuses it).
-2. On claude.ai: **Settings > Capabilities**, turn on code execution ("Create and edit files").
-3. **Customize > Skills > + > Create skill > Upload a skill**, choose `si-nmr-review.zip`, and make sure the skill is switched on.
-4. Start a new chat, upload the spectra (images, a ZIP of images, or an SI PDF; at most 20 files per chat) and write, for example: *Use si-nmr-review to pre-screen these 1H spectra.*
-5. Claude copies the printed labels, runs the scripts and returns a report with a grade, purity range and reasons per spectrum, plus overlay images showing what was measured. To try the lenient rule set, add: *use config/rubric.relaxed.json*.
+2. **Settings > Capabilities**: turn on code execution ("Create and edit files"). If there is no such setting, your organization has switched it off; use way 1 or 3.
+3. **Customize > Skills > + > Create skill > Upload a skill**, choose `si-nmr-review.zip`, and make sure the skill is on.
+4. In a new chat, upload the spectra (images, a ZIP of images, or an SI PDF; at most 20 files per chat) and write: *Use si-nmr-review to pre-screen these 1H spectra.* For the lenient rule set add: *use config/rubric.relaxed.json*.
 
-To try it without your own data, download [example-spectra.zip](https://github.com/1e32e3e/si-nmr-review/releases/latest/download/example-spectra.zip) (the 13 examples) and upload it in step 4.
+To try it without your own data, upload [example-spectra.zip](https://github.com/1e32e3e/si-nmr-review/releases/latest/download/example-spectra.zip) (the 13 examples).
 
-## Use it locally
+### 3. On your computer
 
-Python 3.9+ with numpy, scipy and Pillow (`pip install -r requirements.txt`). The examples come with ready transcriptions, so no model is needed:
+Download the repository (GitHub's "Download ZIP" is fine here) and unzip it. Python 3.9+ with numpy, scipy and Pillow (`pip install -r requirements.txt`).
 
-```
-python si-nmr-review/scripts/review_images.py examples/images examples/transcriptions out
-```
-
-With your own spectra: `scripts/prepare_inputs.py` collects images from a folder, ZIP or PDF; then write one transcription JSON per image (see `schemas/transcription.schema.json`), by hand or with Claude Code following `SKILL.md`.
+- **Demo**: double-click `run_demo.bat` (Windows) or run `sh run_demo.sh`. It grades the 13 examples with both rule sets and opens `demo_output/report.html`. The examples come with ready transcriptions, so no model is needed.
+- **Your own spectra with Claude Code**: copy the `si-nmr-review` folder to `~/.claude/skills/` (Windows: `%USERPROFILE%\.claude\skills\`), start Claude Code in the folder with your spectra and ask *Use si-nmr-review to pre-screen these spectra.* Claude transcribes the printed labels and runs the scripts. The spectra and the scripts do not need to be in the same folder.
+- **By hand**: `scripts/prepare_inputs.py` collects images from a folder, ZIP or PDF; write one transcription JSON per image (`schemas/transcription.schema.json`); then `python si-nmr-review/scripts/review_images.py <images> <transcriptions> <out>` and `python si-nmr-review/scripts/report_html.py out.html "Rules=<out>"`.
 
 ## How it works
 
@@ -43,6 +55,8 @@ spectrum image ──► 1. transcription (model) ──► 2. digitize ──�
 | `config/rubric.json` | The rules, written from the guidelines by agents that never saw the example grades |
 | `config/rubric.relaxed.json` | Same rules with five open decisions taken the lenient way (not approved; for comparison) |
 | `config/solvent_shifts.json` | Residual solvent, water, grease and common-solvent shifts |
+| `scripts/report_html.py` | One HTML page with grades, reasons and overlays (several rule sets side by side) |
+| `REVIEW_GUIDE.md`, `si-nmr-review-guide/` | The same rules written out for a model to follow without code (generated by `tools/build_guide.py`) |
 
 ## Results on the 13 examples
 
