@@ -1,0 +1,60 @@
+{
+  "_note": "Minimal example rubric that shows the format. It is not any group's standard. Write your own config/rubric.json from your group's written standard; see README.md for the format and the fixed grading algorithm.",
+  "purity_basis": "mid",
+  "base_grade_table": [
+    {"min_purity_mol_pct": 98, "grade": "E"},
+    {"min_purity_mol_pct": 95, "grade": "V"},
+    {"min_purity_mol_pct": 90, "grade": "S"},
+    {"min_purity_mol_pct": 0, "grade": "N"}
+  ],
+  "default_base_grade_if_purity_unknown": "S",
+  "rules": [
+    {
+      "id": "PUR-NOT-ESTIMABLE", "title": "Purity cannot be estimated from the page",
+      "standard_quote": "", "nucleus": "1H",
+      "condition": {"feature": "purity_estimable", "op": "is_false"},
+      "effect": "cap", "notches": 0, "cap_grade": "S", "group": "purity", "severity": "blocker",
+      "human_review": true, "reason_template": "Purity could not be estimated (legibility {legibility}); a person must check it."
+    },
+    {
+      "id": "UNK-PRESENT", "title": "Unidentified impurity signals",
+      "standard_quote": "", "nucleus": "1H",
+      "condition": {"feature": "unknown_h_equiv", "op": ">=", "value": 0.05},
+      "effect": "deduct", "notches": 1, "cap_grade": "", "group": "impurity", "severity": "major",
+      "human_review": false, "reason_template": "Unidentified signals total {unknown_h_equiv} H-equivalents."
+    },
+    {
+      "id": "DIL-SOLVENT-TALLEST", "title": "Residual solvent or water is the tallest peak",
+      "standard_quote": "", "nucleus": "1H",
+      "condition": {"feature": "tallest_peak_class", "op": "in", "value": ["residual_solvent", "water"]},
+      "effect": "deduct", "notches": 1, "cap_grade": "", "group": "display", "severity": "major",
+      "human_review": false, "reason_template": "The tallest peak is {tallest_peak_class}: the sample is too dilute."
+    },
+    {
+      "id": "HIDE-LOW", "title": "Product signals drawn too low",
+      "standard_quote": "", "nucleus": "1H",
+      "condition": {"feature": "tallest_product_peak_fraction", "op": "<", "value": 0.2},
+      "effect": "cap", "notches": 0, "cap_grade": "S", "group": "display", "severity": "blocker",
+      "human_review": true, "reason_template": "The tallest product peak reaches only {tallest_product_peak_fraction} of the display height."
+    },
+    {
+      "id": "PRES-STRUCTURE", "title": "Structure not shown",
+      "standard_quote": "", "nucleus": "any",
+      "condition": {"feature": "structure_shown", "op": "is_false"},
+      "effect": "deduct", "notches": 1, "cap_grade": "", "group": "presentation", "severity": "minor",
+      "human_review": false, "reason_template": "No structure is drawn on the page."
+    }
+  ],
+  "group_max_deduction": {"impurity": 2, "display": 2, "presentation": 2},
+  "context_modifiers": [
+    {
+      "id": "CM-SMALL-SAMPLE", "effect": "add", "notches": 1,
+      "condition": {"all": [{"feature": "ctx_small_sample", "op": "is_true"}, {"feature": "tallest_peak_class", "op": "in", "value": ["residual_solvent", "water"]}]},
+      "note": "Very small sample: dilution is partly excused."
+    }
+  ],
+  "not_computable_items": [],
+  "si_level_checks": [],
+  "open_questions": [],
+  "design_notes": "Example only."
+}

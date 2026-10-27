@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Transcription of one 1H NMR spectrum image",
+  "description": "Only what is visibly printed or drawn on the page. No judgement of quality, purity or grade.",
+  "type": "object",
+  "properties": {
+    "axis_labels": {"type": "array", "items": {"type": "number"}, "description": "numbers printed under the main x-axis, left to right"},
+    "title_lines": {"type": "array", "items": {"type": "string"}},
+    "compound_number": {"type": "string", "description": "empty string if only a notebook code or nothing"},
+    "frequency_text": {"type": "string", "description": "as printed, e.g. '500 MHz'; empty if not printed"},
+    "solvent_text": {"type": "string", "description": "as printed, e.g. 'CDCl3'; empty if not printed"},
+    "structure_drawn": {"type": "boolean"},
+    "structure_location": {"type": "string", "enum": ["none", "top-left", "top-center", "top-right", "middle-left", "middle-center", "middle-right", "bottom"]},
+    "integral_values": {"type": "array", "items": {"type": "number"}, "description": "main-spectrum integrals, highest ppm first"},
+    "integral_style": {"type": "string", "enum": ["brackets below baseline", "boxed values below axis", "other", "none"]},
+    "peak_labels_printed": {"type": "boolean"},
+    "annotations": {"type": "array", "items": {"type": "object", "properties": {"text": {"type": "string"}, "approx_ppm": {"type": "number"}}, "required": ["text", "approx_ppm"]}},
+    "insets": {"type": "array", "items": {"type": "object", "properties": {"ppm_left": {"type": "number"}, "ppm_right": {"type": "number"}, "location": {"type": "string"}, "integral_values": {"type": "array", "items": {"type": "number"}}}, "required": ["ppm_left", "ppm_right", "location", "integral_values"]}},
+    "vertical_intensity_axis": {"type": "boolean"},
+    "image_kind": {"type": "string", "enum": ["software screenshot", "scan or photo", "other"]},
+    "legibility": {"type": "string", "enum": ["good", "fair", "poor"]},
+    "trace_color": {"type": "string"},
+    "notes": {"type": "string"}
+  },
+  "required": ["axis_labels", "title_lines", "compound_number", "frequency_text", "solvent_text", "structure_drawn", "structure_location", "integral_values", "integral_style", "peak_labels_printed", "annotations", "insets", "vertical_intensity_axis", "image_kind", "legibility", "trace_color", "notes"]
+}

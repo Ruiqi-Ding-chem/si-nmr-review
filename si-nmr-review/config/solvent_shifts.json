@@ -1,0 +1,686 @@
+{
+  "_source": "1H shifts of residual solvent, water and common impurities, after Gottlieb, Kotlyar & Nudelman, J. Org. Chem. 1997, 62, 7512 and Fulmer et al., Organometallics 2010, 29, 2176. Entered from memory for this prototype: check each value against the tables before relying on it.",
+  "_fields": "residual: residual NMR-solvent peak; water: [low, high] window for the H2O/HOD singlet; grease: alkyl grease/hexane lines; silicone: silicone grease; solvents: name -> list of [ppm, nH, multiplicity], the first entry is the diagnostic peak used for quantitation",
+  "CDCl3": {
+    "residual": 7.26,
+    "water": [
+      1.5,
+      1.72
+    ],
+    "grease": [
+      0.86,
+      1.26
+    ],
+    "silicone": 0.07,
+    "tms": 0.0,
+    "solvents": {
+      "EtOAc": [
+        [
+          2.05,
+          3,
+          "s"
+        ],
+        [
+          4.12,
+          2,
+          "q"
+        ],
+        [
+          1.26,
+          3,
+          "t"
+        ]
+      ],
+      "acetone": [
+        [
+          2.17,
+          6,
+          "s"
+        ]
+      ],
+      "CH2Cl2": [
+        [
+          5.3,
+          2,
+          "s"
+        ]
+      ],
+      "Et2O": [
+        [
+          3.48,
+          4,
+          "q"
+        ],
+        [
+          1.21,
+          6,
+          "t"
+        ]
+      ],
+      "THF": [
+        [
+          3.76,
+          4,
+          "m"
+        ],
+        [
+          1.85,
+          4,
+          "m"
+        ]
+      ],
+      "MeOH": [
+        [
+          3.49,
+          3,
+          "s"
+        ]
+      ],
+      "MeCN": [
+        [
+          2.1,
+          3,
+          "s"
+        ]
+      ],
+      "toluene": [
+        [
+          2.36,
+          3,
+          "s"
+        ]
+      ],
+      "DMF": [
+        [
+          8.02,
+          1,
+          "s"
+        ],
+        [
+          2.96,
+          3,
+          "s"
+        ],
+        [
+          2.88,
+          3,
+          "s"
+        ]
+      ],
+      "DMSO": [
+        [
+          2.62,
+          6,
+          "s"
+        ]
+      ],
+      "Et3N": [
+        [
+          2.53,
+          6,
+          "q"
+        ],
+        [
+          1.03,
+          9,
+          "t"
+        ]
+      ],
+      "iPrOH": [
+        [
+          4.04,
+          1,
+          "sept"
+        ],
+        [
+          1.22,
+          6,
+          "d"
+        ]
+      ],
+      "EtOH": [
+        [
+          3.72,
+          2,
+          "q"
+        ],
+        [
+          1.25,
+          3,
+          "t"
+        ]
+      ],
+      "cyclohexane": [
+        [
+          1.43,
+          12,
+          "s"
+        ]
+      ]
+    }
+  },
+  "CD2Cl2": {
+    "residual": 5.32,
+    "water": [
+      1.45,
+      1.6
+    ],
+    "grease": [
+      0.86,
+      1.27
+    ],
+    "silicone": 0.09,
+    "tms": 0.0,
+    "solvents": {
+      "EtOAc": [
+        [
+          2.0,
+          3,
+          "s"
+        ],
+        [
+          4.05,
+          2,
+          "q"
+        ],
+        [
+          1.23,
+          3,
+          "t"
+        ]
+      ],
+      "acetone": [
+        [
+          2.12,
+          6,
+          "s"
+        ]
+      ],
+      "CHCl3": [
+        [
+          7.32,
+          1,
+          "s"
+        ]
+      ],
+      "Et2O": [
+        [
+          3.43,
+          4,
+          "q"
+        ],
+        [
+          1.15,
+          6,
+          "t"
+        ]
+      ],
+      "THF": [
+        [
+          3.69,
+          4,
+          "m"
+        ],
+        [
+          1.82,
+          4,
+          "m"
+        ]
+      ],
+      "MeOH": [
+        [
+          3.42,
+          3,
+          "s"
+        ]
+      ],
+      "MeCN": [
+        [
+          1.97,
+          3,
+          "s"
+        ]
+      ],
+      "toluene": [
+        [
+          2.34,
+          3,
+          "s"
+        ]
+      ],
+      "DMSO": [
+        [
+          2.52,
+          6,
+          "s"
+        ]
+      ],
+      "cyclohexane": [
+        [
+          1.44,
+          12,
+          "s"
+        ]
+      ]
+    }
+  },
+  "C6D6": {
+    "residual": 7.16,
+    "water": [
+      0.35,
+      0.5
+    ],
+    "grease": [
+      0.92,
+      1.36
+    ],
+    "silicone": 0.29,
+    "tms": 0.0,
+    "solvents": {
+      "EtOAc": [
+        [
+          1.65,
+          3,
+          "s"
+        ],
+        [
+          3.89,
+          2,
+          "q"
+        ],
+        [
+          0.92,
+          3,
+          "t"
+        ]
+      ],
+      "acetone": [
+        [
+          1.55,
+          6,
+          "s"
+        ]
+      ],
+      "CH2Cl2": [
+        [
+          4.27,
+          2,
+          "s"
+        ]
+      ],
+      "CHCl3": [
+        [
+          6.15,
+          1,
+          "s"
+        ]
+      ],
+      "Et2O": [
+        [
+          3.26,
+          4,
+          "q"
+        ],
+        [
+          1.11,
+          6,
+          "t"
+        ]
+      ],
+      "THF": [
+        [
+          3.57,
+          4,
+          "m"
+        ],
+        [
+          1.4,
+          4,
+          "m"
+        ]
+      ],
+      "MeOH": [
+        [
+          3.07,
+          3,
+          "s"
+        ]
+      ],
+      "toluene": [
+        [
+          2.11,
+          3,
+          "s"
+        ]
+      ]
+    }
+  },
+  "DMSO-d6": {
+    "residual": 2.5,
+    "water": [
+      3.28,
+      3.4
+    ],
+    "grease": [
+      0.85,
+      1.24
+    ],
+    "silicone": -0.06,
+    "tms": 0.0,
+    "solvents": {
+      "EtOAc": [
+        [
+          1.99,
+          3,
+          "s"
+        ],
+        [
+          4.03,
+          2,
+          "q"
+        ],
+        [
+          1.17,
+          3,
+          "t"
+        ]
+      ],
+      "acetone": [
+        [
+          2.09,
+          6,
+          "s"
+        ]
+      ],
+      "CH2Cl2": [
+        [
+          5.76,
+          2,
+          "s"
+        ]
+      ],
+      "CHCl3": [
+        [
+          8.32,
+          1,
+          "s"
+        ]
+      ],
+      "Et2O": [
+        [
+          3.38,
+          4,
+          "q"
+        ],
+        [
+          1.09,
+          6,
+          "t"
+        ]
+      ],
+      "THF": [
+        [
+          3.6,
+          4,
+          "m"
+        ],
+        [
+          1.76,
+          4,
+          "m"
+        ]
+      ],
+      "MeOH": [
+        [
+          3.16,
+          3,
+          "s"
+        ]
+      ],
+      "DMF": [
+        [
+          7.95,
+          1,
+          "s"
+        ],
+        [
+          2.89,
+          3,
+          "s"
+        ],
+        [
+          2.73,
+          3,
+          "s"
+        ]
+      ],
+      "toluene": [
+        [
+          2.3,
+          3,
+          "s"
+        ]
+      ]
+    }
+  },
+  "CD3OD": {
+    "residual": 3.31,
+    "water": [
+      4.8,
+      4.92
+    ],
+    "grease": [
+      0.88,
+      1.29
+    ],
+    "silicone": 0.1,
+    "tms": 0.0,
+    "solvents": {
+      "EtOAc": [
+        [
+          2.01,
+          3,
+          "s"
+        ],
+        [
+          4.09,
+          2,
+          "q"
+        ],
+        [
+          1.24,
+          3,
+          "t"
+        ]
+      ],
+      "acetone": [
+        [
+          2.15,
+          6,
+          "s"
+        ]
+      ],
+      "CH2Cl2": [
+        [
+          5.49,
+          2,
+          "s"
+        ]
+      ],
+      "CHCl3": [
+        [
+          7.9,
+          1,
+          "s"
+        ]
+      ],
+      "Et2O": [
+        [
+          3.49,
+          4,
+          "q"
+        ],
+        [
+          1.18,
+          6,
+          "t"
+        ]
+      ],
+      "THF": [
+        [
+          3.71,
+          4,
+          "m"
+        ],
+        [
+          1.87,
+          4,
+          "m"
+        ]
+      ]
+    }
+  },
+  "acetone-d6": {
+    "residual": 2.05,
+    "water": [
+      2.78,
+      2.9
+    ],
+    "grease": [
+      0.87,
+      1.29
+    ],
+    "silicone": 0.13,
+    "tms": 0.0,
+    "solvents": {
+      "EtOAc": [
+        [
+          1.97,
+          3,
+          "s"
+        ],
+        [
+          4.05,
+          2,
+          "q"
+        ],
+        [
+          1.2,
+          3,
+          "t"
+        ]
+      ],
+      "CH2Cl2": [
+        [
+          5.63,
+          2,
+          "s"
+        ]
+      ],
+      "CHCl3": [
+        [
+          8.02,
+          1,
+          "s"
+        ]
+      ],
+      "Et2O": [
+        [
+          3.41,
+          4,
+          "q"
+        ],
+        [
+          1.11,
+          6,
+          "t"
+        ]
+      ],
+      "THF": [
+        [
+          3.63,
+          4,
+          "m"
+        ],
+        [
+          1.79,
+          4,
+          "m"
+        ]
+      ],
+      "MeOH": [
+        [
+          3.31,
+          3,
+          "s"
+        ]
+      ]
+    }
+  },
+  "CD3CN": {
+    "residual": 1.94,
+    "water": [
+      2.1,
+      2.2
+    ],
+    "grease": [
+      0.86,
+      1.27
+    ],
+    "silicone": 0.08,
+    "tms": 0.0,
+    "solvents": {
+      "EtOAc": [
+        [
+          1.97,
+          3,
+          "s"
+        ],
+        [
+          4.06,
+          2,
+          "q"
+        ],
+        [
+          1.2,
+          3,
+          "t"
+        ]
+      ],
+      "acetone": [
+        [
+          2.08,
+          6,
+          "s"
+        ]
+      ],
+      "CH2Cl2": [
+        [
+          5.44,
+          2,
+          "s"
+        ]
+      ],
+      "CHCl3": [
+        [
+          7.58,
+          1,
+          "s"
+        ]
+      ],
+      "THF": [
+        [
+          3.64,
+          4,
+          "m"
+        ],
+        [
+          1.8,
+          4,
+          "m"
+        ]
+      ]
+    }
+  },
+  "_note_scope": "Only solvents common in synthesis and work-up are listed. Single-line species that mostly coincide with product lines (benzene, acetic acid, dioxane) were removed, because a lone line at their shift is more often product or an unknown than that solvent."
+}
