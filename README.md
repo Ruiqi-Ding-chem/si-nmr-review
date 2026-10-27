@@ -34,7 +34,11 @@ Download the repository (GitHub's "Download ZIP" is fine here) and unzip it. Pyt
 
 - **Demo**: double-click `run_demo.bat` (Windows) or run `sh run_demo.sh`. It grades the 13 examples with both rule sets and opens `demo_output/report.html`. The examples come with ready transcriptions, so no model is needed.
 - **Your own spectra with Claude Code**: copy the `si-nmr-review` folder to `~/.claude/skills/` (Windows: `%USERPROFILE%\.claude\skills\`), start Claude Code in the folder with your spectra and ask *Use si-nmr-review to pre-screen these spectra.* Claude transcribes the printed labels and runs the scripts. The spectra and the scripts do not need to be in the same folder.
-- **By hand**: `scripts/prepare_inputs.py` collects images from a folder, ZIP or PDF; write one transcription JSON per image (`schemas/transcription.schema.json`); then `python si-nmr-review/scripts/review_images.py <images> <transcriptions> <out>` and `python si-nmr-review/scripts/report_html.py out.html "Rules=<out>"`.
+- **Your own spectra with Python only** (no AI at all):
+  1. `python si-nmr-review/scripts/prepare_inputs.py <folder, ZIP or SI PDF> --out my/images` collects one image per spectrum.
+  2. `python si-nmr-review/scripts/make_templates.py my/images my/labels` writes a blank label file per image.
+  3. In each file fill at least `axis_labels` (e.g. `"11 to -1 step 0.5"`) and `integral_values` (the printed integrals, highest ppm first); the other fields (compound number, solvent, structure shown, labels such as EtOAc) refine the presentation checks.
+  4. `python si-nmr-review/scripts/review_images.py my/images my/labels my/out` and `python si-nmr-review/scripts/report_html.py my/report.html "Rules=my/out"`.
 
 ## How it works
 

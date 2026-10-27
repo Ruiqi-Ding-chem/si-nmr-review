@@ -12,6 +12,7 @@ import csv
 import glob
 import json
 import os
+import re
 import sys
 
 import numpy as np
@@ -26,6 +27,19 @@ import grade as gr  # noqa: E402
 COLORS = {"unknown": (230, 0, 0), "common_solvent": (255, 140, 0), "water": (0, 90, 255),
           "grease": (150, 0, 200), "silicone_grease": (150, 0, 200), "residual_solvent": (0, 160, 0),
           "c13_satellite": (140, 140, 140), "starting_material": (140, 70, 0)}
+
+
+def expand_labels(v):
+    """Axis labels as a list, or written as a range such as "11 to -1 step 0.5"."""
+    if isinstance(v, str):
+        m = re.match(r"\s*(-?[\d.]+)\s*to\s*(-?[\d.]+)\s*step\s*([\d.]+)\s*$", v)
+        if not m:
+            return []
+        a, b, st = float(m.group(1)), float(m.group(2)), float(m.group(3))
+        n = int(round(abs(a - b) / st)) + 1
+        sign = -1 if b < a else 1
+        return [round(a + sign * i * st, 4) for i in range(n)]
+    return list(v or [])
 
 
 def overlay(path, dig, segs, out):
@@ -75,6 +89,10 @@ def main():
             continue
         with open(tpath, encoding="utf-8") as f:
             ext = json.load(f)
+        ext["axis_labels"] = expand_labels(ext.get("axis_labels"))
+        if not ext["axis_labels"]:
+            print(f"{name}: axis_labels not filled in {tpath}; skipped", file=sys.stderr)
+            continue
         ctx = None
         if a.context and os.path.exists(os.path.join(a.context, name + ".json")):
             with open(os.path.join(a.context, name + ".json"), encoding="utf-8") as f:
